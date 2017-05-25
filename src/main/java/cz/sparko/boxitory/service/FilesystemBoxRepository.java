@@ -23,7 +23,6 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final String hostPrefix;
     private final File boxHome;
 
-    @Autowired
     public FilesystemBoxRepository(AppProperties appProperties) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
