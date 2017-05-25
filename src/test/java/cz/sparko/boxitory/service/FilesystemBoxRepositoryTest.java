@@ -20,7 +20,7 @@ import static org.testng.Assert.assertEquals;
 public class FilesystemBoxRepositoryTest {
 
     private final String TEST_HOME = "target/test-classes/test_repository";
-    private final String TEST_BOX_PREFIX = "sftp://tester@hydra:";
+    private final String TEST_BOX_PREFIX = "sftp://my_test_server:";
     private File testHomeDir;
 
     private AppProperties testAppProperties;
