@@ -1,0 +1,3 @@
+box.home=/custom/test/repository/path
+box.host_prefix=sftp://localhost:
+server.port=8083
