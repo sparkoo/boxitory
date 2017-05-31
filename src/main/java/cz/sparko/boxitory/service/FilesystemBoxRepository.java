@@ -80,7 +80,6 @@ public class FilesystemBoxRepository implements BoxRepository {
         String filename = file.getName();
         List<String> parsedFilename = Arrays.asList(filename.split("_"));
 
-        String name = parsedFilename.get(0);
         String version = parsedFilename.get(1);
         String provider = parsedFilename.get(2);
         if (provider.endsWith(".box")) {

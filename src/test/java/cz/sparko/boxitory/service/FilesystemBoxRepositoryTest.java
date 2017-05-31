@@ -37,23 +37,40 @@ public class FilesystemBoxRepositoryTest {
     public Object[][] boxes() {
         return new Object[][]{
                 {"f25", Optional.of(new Box("f25", "f25",
-                        Arrays.asList(new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
-                                        ("f25", "1"),
-                                        "virtualbox"))),
-                                new BoxVersion("2", Collections.singletonList(new BoxProvider(composePath("f25", "2"),
-                                        "virtualbox")))
-                        )))},
+                        Arrays.asList(
+                                new BoxVersion("1", Collections.singletonList(
+                                        new BoxProvider(composePath("f25", "1", "virtualbox"), "virtualbox")
+                                )),
+                                new BoxVersion("2", Collections.singletonList(
+                                        new BoxProvider(composePath("f25", "2", "virtualbox"), "virtualbox")
+                                ))
+                        )))
+                },
                 {"f26", Optional.of(new Box("f26", "f26",
-                        Arrays.asList(new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
-                                        ("f26", "1"),
-                                        "virtualbox"))),
-                                new BoxVersion("2", Collections.singletonList(new BoxProvider(composePath("f26", "2"),
-                                        "virtualbox"))),
-                                new BoxVersion("3", Collections.singletonList(new BoxProvider(composePath("f26", "3"),
-                                        "virtualbox")))
-                        )))},
+                        Arrays.asList(
+                                new BoxVersion("1", Collections.singletonList(
+                                        new BoxProvider(composePath("f26", "1", "virtualbox"), "virtualbox")
+                                )),
+                                new BoxVersion("2", Collections.singletonList(
+                                        new BoxProvider(composePath("f26", "2", "virtualbox"), "virtualbox")
+                                )),
+                                new BoxVersion("3", Collections.singletonList(
+                                        new BoxProvider(composePath("f26", "3", "virtualbox"), "virtualbox")
+                                ))
+                        )))
+                },
                 {"f27", Optional.empty()},
-                {"f28", Optional.empty()},
+                {"f28", Optional.of(new Box("f28", "f28",
+                        Arrays.asList(
+                                new BoxVersion("1", Arrays.asList(
+                                        new BoxProvider(composePath("f28", "1", "virtualbox"), "virtualbox"),
+                                        new BoxProvider(composePath("f28", "1", "vmware"), "vmware")
+                                )),
+                                new BoxVersion("2", Collections.singletonList(
+                                        new BoxProvider(composePath("f28",  "2", "virtualbox"), "virtualbox")
+                                ))
+                        )))
+                },
                 {"blabol", Optional.empty()},
                 {"wrongBoxFileFormat", Optional.empty()}
         };
@@ -70,8 +87,8 @@ public class FilesystemBoxRepositoryTest {
         expectedResult.ifPresent(box -> assertEquals(providedBox.get(), box));
     }
 
-    private String composePath(String boxName, String version) {
-        return String.format("%s%s/%s/%s_%s_virtualbox.box", TEST_BOX_PREFIX, testHomeDir.getAbsolutePath(),
-                boxName, boxName, version);
+    private String composePath(String boxName, String version, String providerName) {
+        return String.format("%s%s/%s/%s_%s_%s.box", TEST_BOX_PREFIX, testHomeDir.getAbsolutePath(),
+                boxName, boxName, version, providerName);
     }
 }
