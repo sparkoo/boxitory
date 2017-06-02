@@ -87,15 +87,10 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private BoxVersion createBoxVersion(String version, List<File> fileList) {
-        List<BoxProvider> boxProviders = new ArrayList<>();
-
-        if (!fileList.isEmpty()) {
-            fileList.forEach(
-                    (file) -> boxProviders.add(createBoxProviderFromFile(file))
-            );
-        }
-
-        return new BoxVersion(version, boxProviders);
+        return new BoxVersion(
+                version,
+                fileList.stream().map(this::createBoxProviderFromFile).collect(Collectors.toList())
+        );
     }
 
     private BoxProvider createBoxProviderFromFile(File file) {
