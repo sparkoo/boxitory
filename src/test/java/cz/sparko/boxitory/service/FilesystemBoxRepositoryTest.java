@@ -1,6 +1,5 @@
 package cz.sparko.boxitory.service;
 
-import ch.qos.logback.core.util.FileUtil;
 import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxVersion;
@@ -44,10 +43,12 @@ public class FilesystemBoxRepositoryTest {
         File f25 = new File(testHomeDir.getAbsolutePath() + "/f25");
         File f26 = new File(testHomeDir.getAbsolutePath() + "/f26");
         File f27 = new File(testHomeDir.getAbsolutePath() + "/f27");
+        File f28 = new File(testHomeDir.getAbsolutePath() + "/f28");
 
         f25.mkdir();
         f26.mkdir();
         f27.mkdir();
+        f28.mkdir();
 
         new File(f25.getAbsolutePath() + "/f25_1_virtualbox.box").createNewFile();
         new File(f25.getAbsolutePath() + "/f25_2_virtualbox.box").createNewFile();
@@ -57,6 +58,10 @@ public class FilesystemBoxRepositoryTest {
         new File(f26.getAbsolutePath() + "/f26_3_virtualbox.box").createNewFile();
 
         new File(f27.getAbsolutePath() + "/wrongFileFormat.box").createNewFile();
+
+        new File(f28.getAbsolutePath() + "/f28_1_virtualbox.box").createNewFile();
+        new File(f28.getAbsolutePath() + "/f28_1_vmware.box").createNewFile();
+        new File(f28.getAbsolutePath() + "/f28_2_virtualbox.box").createNewFile();
     }
 
     @AfterClass
@@ -68,23 +73,42 @@ public class FilesystemBoxRepositoryTest {
     public Object[][] boxes() {
         return new Object[][]{
                 {"f25", Optional.of(new Box("f25", "f25",
-                        Arrays.asList(new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
-                                        ("f25", "1", "virtualbox"),
-                                        "virtualbox"))),
-                                new BoxVersion("2", Collections.singletonList(new BoxProvider(composePath("f25", "2", "virtualbox"),
-                                        "virtualbox")))
-                        )))},
+                        Arrays.asList(
+                                new BoxVersion("1", Collections.singletonList(
+                                        new BoxProvider(composePath("f25", "1", "virtualbox"), "virtualbox")
+                                )),
+                                new BoxVersion("2", Collections.singletonList(
+                                        new BoxProvider(composePath("f25", "2", "virtualbox"), "virtualbox")
+                                ))
+                        )))
+                },
                 {"f26", Optional.of(new Box("f26", "f26",
-                        Arrays.asList(new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
-                                        ("f26", "1", "virtualbox"),
-                                        "virtualbox"))),
-                                new BoxVersion("2", Collections.singletonList(new BoxProvider(composePath("f26", "2", "virtualbox"),
-                                        "virtualbox"))),
-                                new BoxVersion("3", Collections.singletonList(new BoxProvider(composePath("f26", "3", "virtualbox"),
-                                        "virtualbox")))
-                        )))},
+                        Arrays.asList(
+                                new BoxVersion("1", Collections.singletonList(
+                                        new BoxProvider(composePath("f26", "1", "virtualbox"), "virtualbox")
+                                )),
+                                new BoxVersion("2", Collections.singletonList(
+                                        new BoxProvider(composePath("f26", "2", "virtualbox"), "virtualbox")
+                                )),
+                                new BoxVersion("3", Collections.singletonList(
+                                        new BoxProvider(composePath("f26", "3", "virtualbox"), "virtualbox")
+                                ))
+                        )))
+                },
                 {"f27", Optional.empty()},
-                {"blabol", Optional.empty()}
+                {"f28", Optional.of(new Box("f28", "f28",
+                        Arrays.asList(
+                                new BoxVersion("1", Arrays.asList(
+                                        new BoxProvider(composePath("f28", "1", "virtualbox"), "virtualbox"),
+                                        new BoxProvider(composePath("f28", "1", "vmware"), "vmware")
+                                )),
+                                new BoxVersion("2", Collections.singletonList(
+                                        new BoxProvider(composePath("f28",  "2", "virtualbox"), "virtualbox")
+                                ))
+                        )))
+                },
+                {"blabol", Optional.empty()},
+                {"wrongBoxFileFormat", Optional.empty()}
         };
     }
 
