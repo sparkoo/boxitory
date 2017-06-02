@@ -6,7 +6,6 @@ import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.util.*;
@@ -81,11 +80,9 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles) {
         List<BoxVersion> boxVersions = new ArrayList<>();
-        groupedFiles
-                .entrySet()
-                .forEach(
-                    (entry) -> boxVersions.add(createBoxVersion(entry.getKey(), entry.getValue()))
-                );
+        groupedFiles.forEach(
+                (key, value) -> boxVersions.add(createBoxVersion(key, value))
+        );
         return boxVersions;
     }
 
