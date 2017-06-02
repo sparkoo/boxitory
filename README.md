@@ -79,4 +79,4 @@ Configuration can be provided by `application.properties` file on classpath
 box.home=/tmp/test_repository
 box.prefix=sftp://my_box_server:
 ```
-, or as command line arguments `java -jar -Dbox.home=/tmp/test_repository target/boxsitory-${version}.jar`
+or as command line arguments `java -jar -Dbox.home=/tmp/test_repository target/boxsitory-${version}.jar`
