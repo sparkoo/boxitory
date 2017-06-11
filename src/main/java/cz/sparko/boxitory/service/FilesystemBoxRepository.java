@@ -6,7 +6,6 @@ import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,10 +21,16 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private final String hostPrefix;
     private final File boxHome;
+    private final HashService hashService;
 
     public FilesystemBoxRepository(AppProperties appProperties) {
+        this(appProperties, null);
+    }
+
+    public FilesystemBoxRepository(AppProperties appProperties, HashService hashService) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
+        this.hashService = hashService;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
