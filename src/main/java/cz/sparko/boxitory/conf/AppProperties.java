@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class AppProperties {
     private String home = ".";
     private String host_prefix = "";
+    private boolean sort_desc = false;
 
     public String getHome() {
         return home;
@@ -15,6 +16,14 @@ public class AppProperties {
 
     public String getHost_prefix() {
         return host_prefix;
+    }
+
+    public boolean isSort_desc() {
+        return sort_desc;
+    }
+
+    public void setSort_desc(boolean sort_desc) {
+        this.sort_desc = sort_desc;
     }
 
     public void setHome(String home) {

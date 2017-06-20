@@ -24,3 +24,4 @@ nbdist/
 .nb-gradle/
 
 application.properties
+test_repository/

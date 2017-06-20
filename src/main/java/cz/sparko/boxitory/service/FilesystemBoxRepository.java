@@ -10,16 +10,23 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.lang.Integer.compare;
+import static java.lang.Integer.parseInt;
+import static java.util.Comparator.comparingInt;
 
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
 
     private final String hostPrefix;
     private final File boxHome;
+    private final boolean sortDesc;
 
     public FilesystemBoxRepository(AppProperties appProperties) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
+        this.sortDesc = appProperties.isSort_desc();
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
@@ -83,6 +90,12 @@ public class FilesystemBoxRepository implements BoxRepository {
         groupedFiles.forEach(
                 (key, value) -> boxVersions.add(createBoxVersion(key, value))
         );
+        Comparator<BoxVersion> versionComparator = Comparator.comparingInt(o -> Integer.parseInt(o.getVersion()));
+        if (sortDesc) {
+            boxVersions.sort(versionComparator.reversed());
+        } else {
+            boxVersions.sort(versionComparator);
+        }
         return boxVersions;
     }
 
