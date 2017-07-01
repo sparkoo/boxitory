@@ -23,10 +23,6 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final File boxHome;
     private final HashService hashService;
 
-    public FilesystemBoxRepository(AppProperties appProperties) {
-        this(appProperties, null);
-    }
-
     public FilesystemBoxRepository(AppProperties appProperties, HashService hashService) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();

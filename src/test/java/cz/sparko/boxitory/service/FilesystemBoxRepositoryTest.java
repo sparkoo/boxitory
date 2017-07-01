@@ -68,7 +68,8 @@ public class FilesystemBoxRepositoryTest {
     public Object[][] boxes() {
         return new Object[][]{
                 {"f25", Optional.of(new Box("f25", "f25",
-                        Arrays.asList(new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
+                        Arrays.asList(
+                                new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
                                         ("f25", "1", "virtualbox"),
                                         "virtualbox"))),
                                 new BoxVersion("2", Collections.singletonList(new BoxProvider(composePath("f25", "2", "virtualbox"),
@@ -90,7 +91,7 @@ public class FilesystemBoxRepositoryTest {
 
     @Test(dataProvider = "boxes")
     public void givenRepository_whenGetBox_thenGetWhenFound(String boxName, Optional<Box> expectedResult) {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties);
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new BlankHashService());
 
 
         Optional<Box> providedBox = boxRepository.getBox(boxName);
