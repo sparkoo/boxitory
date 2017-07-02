@@ -10,6 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.security.NoSuchAlgorithmException;
+
 @SpringBootApplication
 public class App {
 
@@ -19,7 +21,7 @@ public class App {
 
     @Bean
     @Autowired
-    public BoxRepository boxRepository(AppProperties appProperties) {
+    public BoxRepository boxRepository(AppProperties appProperties) throws NoSuchAlgorithmException {
         HashServiceFactory hashServiceFactory = new HashServiceFactory();
         HashService hashService = hashServiceFactory.createHashService(appProperties.getChecksum());
         return new FilesystemBoxRepository(appProperties, hashService);

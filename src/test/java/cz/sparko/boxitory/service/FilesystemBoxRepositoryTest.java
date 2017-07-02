@@ -71,18 +71,18 @@ public class FilesystemBoxRepositoryTest {
                         Arrays.asList(
                                 new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
                                         ("f25", "1", "virtualbox"),
-                                        "virtualbox"))),
+                                        "virtualbox", "", ""))),
                                 new BoxVersion("2", Collections.singletonList(new BoxProvider(composePath("f25", "2", "virtualbox"),
-                                        "virtualbox")))
+                                        "virtualbox", "", "")))
                         )))},
                 {"f26", Optional.of(new Box("f26", "f26",
                         Arrays.asList(new BoxVersion("1", Collections.singletonList(new BoxProvider(composePath
                                         ("f26", "1", "virtualbox"),
-                                        "virtualbox"))),
+                                        "virtualbox", "", ""))),
                                 new BoxVersion("2", Collections.singletonList(new BoxProvider(composePath("f26", "2", "virtualbox"),
-                                        "virtualbox"))),
+                                        "virtualbox", "", ""))),
                                 new BoxVersion("3", Collections.singletonList(new BoxProvider(composePath("f26", "3", "virtualbox"),
-                                        "virtualbox")))
+                                        "virtualbox", "", "")))
                         )))},
                 {"f27", Optional.empty()},
                 {"blabol", Optional.empty()}
