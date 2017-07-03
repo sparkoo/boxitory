@@ -9,12 +9,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashServiceFactory {
 
-    public HashService createHashService(String type) throws NoSuchAlgorithmException {
-        type = type.toUpperCase();
+    public HashService createHashService(String algorithm) throws NoSuchAlgorithmException {
+        algorithm = algorithm.toUpperCase();
 
-        switch (type) {
+        switch (algorithm) {
             case "MD5":
-                return new DigestHashService(MessageDigest.getInstance(type));
+                return new DigestHashService(MessageDigest.getInstance(algorithm));
             case "SHA1":
                 return new DigestHashService(MessageDigest.getInstance("SHA-1"));
             case "SHA256":
@@ -23,7 +23,7 @@ public class HashServiceFactory {
                 return new BlankHashService();
             default:
                 throw new IllegalArgumentException(
-                        "Configured checksum type (box.checksum=" + type + ") is not supported"
+                        "Configured checksum type (box.checksum=" + algorithm + ") is not supported"
                 );
         }
     }

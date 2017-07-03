@@ -25,7 +25,7 @@ public class DigestHashService implements HashService {
     }
 
     @Override
-    public String encode(File file) {
+    public String getChecksum(File file) {
         byte[] bytes;
 
         try {

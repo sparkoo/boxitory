@@ -10,7 +10,7 @@ public class BlankHashService implements HashService{
     }
 
     @Override
-    public String encode(File file) {
+    public String getChecksum(File file) {
         return "";
     }
 

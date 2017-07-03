@@ -4,5 +4,5 @@ import java.io.File;
 
 public interface HashService {
     String getHashType();
-    String encode(File file);
+    String getChecksum(File file);
 }
