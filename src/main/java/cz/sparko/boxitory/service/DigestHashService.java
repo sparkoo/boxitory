@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.MessageDigest;
+import java.util.Objects;
 
 public class DigestHashService implements HashService {
 
@@ -50,5 +51,25 @@ public class DigestHashService implements HashService {
 
     private String getHash(byte[] diggestBytes) {
         return DatatypeConverter.printHexBinary(diggestBytes).toLowerCase();
+    }
+
+    @Override
+    public String toString() {
+        return "DigestHashService{" +
+                "messageDigest=" + messageDigest +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DigestHashService that = (DigestHashService) o;
+        return messageDigest.getAlgorithm().equals(that.messageDigest.getAlgorithm());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(messageDigest);
     }
 }

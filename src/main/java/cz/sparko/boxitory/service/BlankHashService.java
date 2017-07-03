@@ -13,4 +13,9 @@ public class BlankHashService implements HashService{
     public String encode(File file) {
         return "";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return true;
+    }
 }

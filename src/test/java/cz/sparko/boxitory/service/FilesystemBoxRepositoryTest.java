@@ -1,6 +1,5 @@
 package cz.sparko.boxitory.service;
 
-import ch.qos.logback.core.util.FileUtil;
 import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxVersion;
