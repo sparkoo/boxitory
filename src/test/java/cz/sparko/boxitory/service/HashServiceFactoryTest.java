@@ -11,8 +11,6 @@ import java.security.NoSuchAlgorithmException;
 
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
 
 @SpringBootTest
 public class HashServiceFactoryTest {
