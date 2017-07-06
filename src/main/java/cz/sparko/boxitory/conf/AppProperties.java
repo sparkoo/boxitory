@@ -9,6 +9,7 @@ public class AppProperties {
     private String home = ".";
     private String host_prefix = "";
     private String checksum = "disabled";
+    private boolean sort_desc = false;
 
     public String getHome() {
         return home;
@@ -18,8 +19,16 @@ public class AppProperties {
         return host_prefix;
     }
 
+    public boolean isSort_desc() {
+        return sort_desc;
+    }
+
     public String getChecksum() {
         return checksum;
+    }
+
+    public void setSort_desc(boolean sort_desc) {
+        this.sort_desc = sort_desc;
     }
 
     public void setHome(String home) {

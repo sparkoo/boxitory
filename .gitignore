@@ -24,3 +24,6 @@ nbdist/
 .nb-gradle/
 
 application.properties
+test_repository/
+/pom.xml.releaseBackup
+/release.properties

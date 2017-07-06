@@ -72,6 +72,11 @@ $ curl http://localhost:8083/f26
    * do define for example protocol or server, where boxes are placed
    * e.g.: `sftp://my_box_server:`
    * **default value**: *empty*
+ * `box.sort_desc`
+   * boolean value `true|false`
+   * when default or `false`, boxes are sorted by version in ascending order
+   * when `true`, boxes are sorted by version in descending order
+   * default value: `false`
 
 Configuration can be provided by `application.properties` file on classpath
 ```

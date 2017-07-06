@@ -24,9 +24,9 @@ public class BoxVersion {
     public boolean equals(Object o) {
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
-        BoxVersion that = (BoxVersion) o;
-        return Objects.equals(version, that.version) &&
-                Objects.equals(providers, that.providers);
+        BoxVersion thatVersion = (BoxVersion) o;
+        return Objects.equals(this.version, thatVersion.version) &&
+                providers.containsAll(thatVersion.getProviders()) && thatVersion.getProviders().containsAll(providers);
     }
 
     @Override

@@ -8,13 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.singletonList;
 
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
@@ -22,19 +17,23 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final String hostPrefix;
     private final File boxHome;
     private final HashService hashService;
+    private final boolean sortDesc;
 
     public FilesystemBoxRepository(AppProperties appProperties, HashService hashService) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
+        this.sortDesc = appProperties.isSort_desc();
         this.hashService = hashService;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
     @Override
     public Optional<Box> getBox(String boxName) {
-        List<BoxVersion> boxVersions = new ArrayList<>();
+        Map<String, List<File>> groupedBoxFiles = new HashMap<>();
         getBoxDir(boxName)
-                .ifPresent(d -> boxVersions.addAll(getBoxVersionsFromBoxDir(d)));
+                .ifPresent(d -> groupedBoxFiles.putAll(groupBoxFilesByVersion(d)));
+
+        List<BoxVersion> boxVersions = createBoxVersionsFromGroupedFiles(groupedBoxFiles);
         if (boxVersions.isEmpty()) {
             LOG.debug("no box versions found for [{}]", boxName);
             return Optional.empty();
@@ -55,15 +54,16 @@ public class FilesystemBoxRepository implements BoxRepository {
                 .findFirst();
     }
 
-    private List<BoxVersion> getBoxVersionsFromBoxDir(File boxDir) {
+    private Map<String, List<File>> groupBoxFilesByVersion(File boxDir) {
         File[] boxFiles = Optional.ofNullable(boxDir.listFiles())
                 .orElse(new File[0]);
         return Arrays.stream(boxFiles)
                 .filter(File::isFile)
                 .filter(f -> f.getName().endsWith(".box"))
                 .filter(this::validateFilename)
-                .map(this::parseBoxFile)
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(
+                        this::getBoxVersionFromFileName
+                ));
     }
 
     private boolean validateFilename(File boxFile) {
@@ -76,24 +76,46 @@ public class FilesystemBoxRepository implements BoxRepository {
         return true;
     }
 
-    private BoxVersion parseBoxFile(File file) {
+    private String getBoxVersionFromFileName(File file) {
+        String filename = file.getName();
+        List<String> parsedFilename = Arrays.asList(filename.split("_"));
+        return parsedFilename.get(1);
+    }
+
+    private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles) {
+        List<BoxVersion> boxVersions = new ArrayList<>();
+        groupedFiles.forEach(
+                (key, value) -> boxVersions.add(createBoxVersion(key, value))
+        );
+        Comparator<BoxVersion> versionComparator = Comparator.comparingInt(o -> Integer.parseInt(o.getVersion()));
+        if (sortDesc) {
+            boxVersions.sort(versionComparator.reversed());
+        } else {
+            boxVersions.sort(versionComparator);
+        }
+        return boxVersions;
+    }
+
+    private BoxVersion createBoxVersion(String version, List<File> fileList) {
+        return new BoxVersion(
+                version,
+                fileList.stream().map(this::createBoxProviderFromFile).collect(Collectors.toList())
+        );
+    }
+
+    private BoxProvider createBoxProviderFromFile(File file) {
         String filename = file.getName();
         List<String> parsedFilename = Arrays.asList(filename.split("_"));
 
-        String version = parsedFilename.get(1);
         String provider = parsedFilename.get(2);
         if (provider.endsWith(".box")) {
             provider = provider.substring(0, provider.length() - 4);
         }
-        return new BoxVersion(version,
-                singletonList(
-                    new BoxProvider(
-                        hostPrefix + file.getAbsolutePath(),
-                        provider,
-                        hashService.getHashType(),
-                        hashService.getChecksum(file)
-                    )
-                )
+        return new BoxProvider(
+                hostPrefix + file.getAbsolutePath(),
+                provider,
+                hashService.getHashType(),
+                hashService.getChecksum(file)
         );
     }
 }
