@@ -83,11 +83,11 @@ public class FilesystemBoxRepositoryTest {
                         Arrays.asList(
                                 new BoxVersion("1", Collections.singletonList(
                                         new BoxProvider(composePath("f25", "1", "virtualbox"),
-                                                "virtualbox", "", "")
+                                                "virtualbox", null, null)
                                 )),
                                 new BoxVersion("2", Collections.singletonList(
                                         new BoxProvider(composePath("f25", "2", "virtualbox"),
-                                                "virtualbox", "", "")
+                                                "virtualbox", null, null)
                                 ))
                         )))
                 },
@@ -95,15 +95,15 @@ public class FilesystemBoxRepositoryTest {
                         Arrays.asList(
                                 new BoxVersion("1", Collections.singletonList(
                                         new BoxProvider(composePath("f26", "1", "virtualbox"),
-                                                "virtualbox", "", "")
+                                                "virtualbox", null, null)
                                 )),
                                 new BoxVersion("2", Collections.singletonList(
                                         new BoxProvider(composePath("f26", "2", "virtualbox"),
-                                                "virtualbox", "", "")
+                                                "virtualbox", null, null)
                                 )),
                                 new BoxVersion("3", Collections.singletonList(
                                         new BoxProvider(composePath("f26", "3", "virtualbox"),
-                                                "virtualbox", "", "")
+                                                "virtualbox", null, null)
                                 ))
                         )))
                 },
@@ -112,13 +112,13 @@ public class FilesystemBoxRepositoryTest {
                         Arrays.asList(
                                 new BoxVersion("1", Arrays.asList(
                                         new BoxProvider(composePath("f28", "1", "virtualbox"),
-                                                "virtualbox", "", ""),
+                                                "virtualbox", null, null),
                                         new BoxProvider(composePath("f28", "1", "vmware"),
-                                                "vmware", "", "")
+                                                "vmware", null, null)
                                 )),
                                 new BoxVersion("2", Collections.singletonList(
                                         new BoxProvider(composePath("f28",  "2", "virtualbox"),
-                                                "virtualbox", "", "")
+                                                "virtualbox", null, null)
                                 ))
                         )))
                 },
@@ -129,7 +129,7 @@ public class FilesystemBoxRepositoryTest {
 
     @Test(dataProvider = "boxes")
     public void givenRepository_whenGetBox_thenGetWhenFound(String boxName, Optional<Box> expectedResult) {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new BlankHashService());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
 
 
         Optional<Box> providedBox = boxRepository.getBox(boxName);
@@ -142,7 +142,7 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortAscending_whenGetBox_thenVersionsSortedAsc() {
         testAppProperties.setSort_desc(false);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new BlankHashService());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "1");
@@ -154,7 +154,7 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortDescending_whenGetBox_thenVersionsSortedDesc() {
         testAppProperties.setSort_desc(true);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new BlankHashService());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "3");

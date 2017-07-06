@@ -1,7 +1,10 @@
 package cz.sparko.boxitory.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BoxProvider {
     private final String url;
     private final String name;

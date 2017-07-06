@@ -2,20 +2,20 @@ package cz.sparko.boxitory.service;
 
 import java.io.File;
 
-public class BlankHashService implements HashService{
+public class NoopHashService implements HashService {
 
     @Override
     public String getHashType() {
-        return "";
+        return null;
     }
 
     @Override
     public String getChecksum(File file) {
-        return "";
+        return null;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return true;
+        return obj.getClass().getName().equals(NoopHashService.class.getName());
     }
 }

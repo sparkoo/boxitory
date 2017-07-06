@@ -1,6 +1,6 @@
 package cz.sparko.boxitory.factory;
 
-import cz.sparko.boxitory.service.BlankHashService;
+import cz.sparko.boxitory.service.NoopHashService;
 import cz.sparko.boxitory.service.DigestHashService;
 import cz.sparko.boxitory.service.HashService;
 
@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashServiceFactory {
 
-    public HashService createHashService(String algorithm) throws NoSuchAlgorithmException {
+    public static HashService createHashService(String algorithm) throws NoSuchAlgorithmException {
         algorithm = algorithm.toUpperCase();
 
         switch (algorithm) {
@@ -20,7 +20,7 @@ public class HashServiceFactory {
             case "SHA256":
                 return new DigestHashService(MessageDigest.getInstance("SHA-256"));
             case "DISABLED":
-                return new BlankHashService();
+                return new NoopHashService();
             default:
                 throw new IllegalArgumentException(
                         "Configured checksum type (box.checksum=" + algorithm + ") is not supported"
