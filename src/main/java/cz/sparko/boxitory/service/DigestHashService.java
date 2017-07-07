@@ -32,7 +32,9 @@ public class DigestHashService implements HashService {
             bytes = getByteArrayFromFile(file);
         } catch (IOException e) {
             LOG.error("Error during processing file [{}], message: [{}]", file, e.getMessage());
-            return "";
+            throw new RuntimeException(
+                    "Error while getting checksum for file " + string + " reason: " + e.getMessage(), e
+            );
         }
 
         return getHash(
