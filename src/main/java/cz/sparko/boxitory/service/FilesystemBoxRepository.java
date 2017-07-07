@@ -115,7 +115,7 @@ public class FilesystemBoxRepository implements BoxRepository {
                 hostPrefix + file.getAbsolutePath(),
                 provider,
                 hashService.getHashType(),
-                hashService.getChecksum(file)
+                hashService.getChecksum(file.getAbsolutePath())
         );
     }
 }

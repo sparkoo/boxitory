@@ -1,6 +1,5 @@
 package cz.sparko.boxitory.service;
 
-import java.io.File;
 
 public class NoopHashService implements HashService {
 
@@ -10,7 +9,7 @@ public class NoopHashService implements HashService {
     }
 
     @Override
-    public String getChecksum(File file) {
+    public String getChecksum(String string) {
         return null;
     }
 

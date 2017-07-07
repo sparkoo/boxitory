@@ -72,7 +72,7 @@ public class DigestHashServiceTest {
     public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(String algorithm, File file, String expectedChecksum) throws NoSuchAlgorithmException {
         HashService hashService = new DigestHashService(MessageDigest.getInstance(algorithm));
 
-        String checksum = hashService.getChecksum(file);
+        String checksum = hashService.getChecksum(file.getAbsolutePath());
 
         assertEquals(checksum, expectedChecksum);
     }
