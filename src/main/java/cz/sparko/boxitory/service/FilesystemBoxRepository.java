@@ -8,14 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.lang.Integer.compare;
-import static java.lang.Integer.parseInt;
-import static java.util.Comparator.comparingInt;
 
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
@@ -35,6 +35,7 @@ public class FilesystemBoxRepository implements BoxRepository {
     public List<String> getBoxes() {
         return Arrays.stream(boxHome.listFiles(File::isDirectory))
                 .map(File::getName)
+                .sorted()
                 .collect(Collectors.toList());
     }
 
