@@ -14,5 +14,11 @@ public interface BoxRepository {
      */
     Optional<Box> getBox(String boxName);
 
+    /**
+     * Returns {@link List} of names of available {@link Box}es. Call {@link BoxRepository#getBox(String)} with any of
+     * returned name should get valid result.
+     *
+     * @return names of available {@link Box}es
+     */
     List<String> getBoxes();
 }

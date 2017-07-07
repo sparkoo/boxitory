@@ -21,6 +21,6 @@ public class BoxController {
     @ResponseBody
     public Box getBoxes(@PathVariable String boxName) {
         return boxRepository.getBox(boxName)
-                .orElseThrow(() -> new NotFoundException("[" + boxName + "] does not exist"));
+                .orElseThrow(() -> new NotFoundException("box [" + boxName + "] does not exist"));
     }
 }
