@@ -2,6 +2,7 @@ package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.domain.Box;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BoxRepository {
@@ -12,4 +13,6 @@ public interface BoxRepository {
      * @return {@link Box} when found, {@link Optional#empty()} when not found
      */
     Optional<Box> getBox(String boxName);
+
+    List<String> getBoxes();
 }

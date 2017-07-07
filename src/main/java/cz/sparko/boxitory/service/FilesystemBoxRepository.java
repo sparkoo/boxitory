@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +29,13 @@ public class FilesystemBoxRepository implements BoxRepository {
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
+    }
+
+    @Override
+    public List<String> getBoxes() {
+        return Arrays.stream(boxHome.listFiles(File::isDirectory))
+                .map(File::getName)
+                .collect(Collectors.toList());
     }
 
     @Override
