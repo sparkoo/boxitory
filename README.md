@@ -77,6 +77,12 @@ $ curl http://localhost:8083/f26
    * when default or `false`, boxes are sorted by version in ascending order
    * when `true`, boxes are sorted by version in descending order
    * default value: `false`
+ * `box.checksum`
+   * string value: `disabled|md5|sha1|sha256`
+   * default value: `disabled`
+   * when default or `disabled` boxes output json not contains properties `checksumType` and `checksum`
+   * when `md5|sha1|sha256` boxes output json contains properties `checksumType` and `checksum` with coresponding values
+   
 
 Configuration can be provided by `application.properties` file on classpath
 ```
