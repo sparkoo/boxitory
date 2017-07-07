@@ -1,14 +1,21 @@
 package cz.sparko.boxitory.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BoxProvider {
     private final String url;
     private final String name;
+    private final String checksumType;
+    private final String checksum;
 
-    public BoxProvider(String url, String name) {
+    public BoxProvider(String url, String name, String checksumType, String checksum) {
         this.url = url;
         this.name = name;
+        this.checksumType = checksumType;
+        this.checksum = checksum;
     }
 
     @Override
@@ -16,6 +23,8 @@ public class BoxProvider {
         return "BoxProvider{" +
                 "url='" + url + '\'' +
                 ", name='" + name + '\'' +
+                ", checksumType='" + checksumType + '\'' +
+                ", checksum='" + checksum  + '\'' +
                 '}';
     }
 
@@ -25,12 +34,14 @@ public class BoxProvider {
         if (o == null || getClass() != o.getClass()) { return false; }
         BoxProvider that = (BoxProvider) o;
         return Objects.equals(url, that.url) &&
-                Objects.equals(name, that.name);
+                Objects.equals(name, that.name) &&
+                Objects.equals(checksumType, that.checksumType) &&
+                Objects.equals(checksum, that.checksum);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, name);
+        return Objects.hash(url, name, checksumType, checksum);
     }
 
     public String getUrl() {
@@ -40,4 +51,8 @@ public class BoxProvider {
     public String getName() {
         return name;
     }
+
+    public String getChecksumType() { return checksumType; }
+
+    public String getChecksum() { return checksum; }
 }

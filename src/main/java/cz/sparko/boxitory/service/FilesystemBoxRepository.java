@@ -22,12 +22,14 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private final String hostPrefix;
     private final File boxHome;
+    private final HashService hashService;
     private final boolean sortDesc;
 
-    public FilesystemBoxRepository(AppProperties appProperties) {
+    public FilesystemBoxRepository(AppProperties appProperties, HashService hashService) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();
+        this.hashService = hashService;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
@@ -118,10 +120,16 @@ public class FilesystemBoxRepository implements BoxRepository {
     private BoxProvider createBoxProviderFromFile(File file) {
         String filename = file.getName();
         List<String> parsedFilename = Arrays.asList(filename.split("_"));
+
         String provider = parsedFilename.get(2);
         if (provider.endsWith(".box")) {
             provider = provider.substring(0, provider.length() - 4);
         }
-        return new BoxProvider(hostPrefix + file.getAbsolutePath(), provider);
+        return new BoxProvider(
+                hostPrefix + file.getAbsolutePath(),
+                provider,
+                hashService.getHashType(),
+                hashService.getChecksum(file.getAbsolutePath())
+        );
     }
 }
