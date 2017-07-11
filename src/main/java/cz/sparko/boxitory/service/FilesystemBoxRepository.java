@@ -8,7 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FilesystemBoxRepository implements BoxRepository {
@@ -25,6 +31,14 @@ public class FilesystemBoxRepository implements BoxRepository {
         this.sortDesc = appProperties.isSort_desc();
         this.hashService = hashService;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
+    }
+
+    @Override
+    public List<String> getBoxes() {
+        return Arrays.stream(boxHome.listFiles(File::isDirectory))
+                .map(File::getName)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     @Override
