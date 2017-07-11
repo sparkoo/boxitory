@@ -6,8 +6,6 @@ import cz.sparko.boxitory.service.BoxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 public class BoxController {
     private BoxRepository boxRepository;
