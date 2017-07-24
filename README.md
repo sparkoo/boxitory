@@ -82,8 +82,12 @@ $ curl http://localhost:8083/f26
    * default value: `disabled`
    * when default or `disabled` boxes output json not contains properties `checksumType` and `checksum`
    * when `md5|sha1|sha256` boxes output json contains properties `checksumType` and `checksum` with coresponding values
+### Advanced Options
+ * `box.checksum_buffer_size`
+  * Box file is loaded to this buffer to calculate box checksums
+  * default value: `1024`
    
-
+### How to configuration
 Configuration can be provided by `application.properties` file on classpath
 ```
 # application.properties
