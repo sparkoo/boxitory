@@ -22,7 +22,7 @@ public class App {
     @Bean
     @Autowired
     public BoxRepository boxRepository(AppProperties appProperties) throws NoSuchAlgorithmException {
-        HashService hashService = HashServiceFactory.createHashService(appProperties.getChecksum());
+        HashService hashService = HashServiceFactory.createHashService(appProperties);
         return new FilesystemBoxRepository(appProperties, hashService);
     }
 }
