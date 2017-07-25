@@ -8,6 +8,12 @@ is repository for Vagrant's Virtual Machine boxes, which can manage box versions
 
 By default, http server will start on port *8083*.
 
+#### Build status (travis-ci)
+
+devel [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=devel)](https://travis-ci.org/sparkoo/boxitory)
+
+master: [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=master)](https://travis-ci.org/sparkoo/boxitory)
+
 ## How it works
 
 *Boxitory* currently implements just filesystem box provider. That requires strict folder structure.
