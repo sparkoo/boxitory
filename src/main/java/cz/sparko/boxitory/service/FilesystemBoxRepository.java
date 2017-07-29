@@ -36,6 +36,7 @@ public class FilesystemBoxRepository implements BoxRepository {
     @Override
     public List<String> getBoxes() {
         return Arrays.stream(boxHome.listFiles(File::isDirectory))
+                .filter(this::containsValidBoxFile)
                 .map(File::getName)
                 .sorted()
                 .collect(Collectors.toList());
@@ -131,5 +132,10 @@ public class FilesystemBoxRepository implements BoxRepository {
                 hashService.getHashType(),
                 hashService.getChecksum(file.getAbsolutePath())
         );
+    }
+
+    private boolean containsValidBoxFile(File file) {
+        File[] files = file.listFiles((dir, name) -> name.matches(dir.getName() + "_(\\d+)_(\\w+)\\.box"));
+        return files.length > 0;
     }
 }
