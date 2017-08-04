@@ -83,8 +83,9 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private boolean validateFilename(File boxFile) {
         String filename = boxFile.getName();
-        List<String> parsedFilename = Arrays.asList(filename.split("_"));
-        if (parsedFilename.size() != 3) {
+        File parentDir = boxFile.getParentFile();
+
+        if (!filename.matches(parentDir.getName() + "_(\\d+)_(\\w+)\\.box")) {
             LOG.warn("box file [{}] has wrong name. must be in format ${name}_${version}_${provider}.box", filename);
             return false;
         }
@@ -135,7 +136,7 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private boolean containsValidBoxFile(File file) {
-        File[] files = file.listFiles((dir, name) -> name.matches(dir.getName() + "_(\\d+)_(\\w+)\\.box"));
+        File[] files = file.listFiles(this::validateFilename);
         return files.length > 0;
     }
 }
