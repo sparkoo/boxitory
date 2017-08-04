@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @SpringBootTest
@@ -168,7 +169,8 @@ public class FilesystemBoxRepositoryTest {
         BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
 
         List<String> boxes = boxRepository.getBoxes();
-        assertTrue(boxes.containsAll(Arrays.asList("f25", "f26", "f27", "f28", "f29")));
+        assertTrue(boxes.containsAll(Arrays.asList("f25", "f26", "f28", "f29")));
+        assertFalse(boxes.containsAll(Arrays.asList("f27")));
     }
 
     private String composePath(String boxName, String version, String provider) {
