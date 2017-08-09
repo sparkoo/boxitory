@@ -1,3 +1,5 @@
 box.home=/custom/test/repository/path
 box.host_prefix=sftp://localhost:
 server.port=8083
+box.checksum=disabled
+box.sort_desc=false

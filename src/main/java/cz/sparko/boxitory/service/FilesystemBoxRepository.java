@@ -8,26 +8,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.lang.Integer.compare;
-import static java.lang.Integer.parseInt;
-import static java.util.Comparator.comparingInt;
 
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
 
     private final String hostPrefix;
     private final File boxHome;
+    private final HashService hashService;
     private final boolean sortDesc;
 
-    public FilesystemBoxRepository(AppProperties appProperties) {
+    public FilesystemBoxRepository(AppProperties appProperties, HashService hashService) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();
+        this.hashService = hashService;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
+    }
+
+    @Override
+    public List<String> getBoxes() {
+        return Arrays.stream(boxHome.listFiles(File::isDirectory))
+                .filter(this::containsValidBoxFile)
+                .map(File::getName)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -71,8 +83,9 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private boolean validateFilename(File boxFile) {
         String filename = boxFile.getName();
-        List<String> parsedFilename = Arrays.asList(filename.split("_"));
-        if (parsedFilename.size() != 3) {
+        File parentDir = boxFile.getParentFile();
+
+        if (!filename.matches(parentDir.getName() + "_(\\d+)_(\\w+)\\.box")) {
             LOG.warn("box file [{}] has wrong name. must be in format ${name}_${version}_${provider}.box", filename);
             return false;
         }
@@ -109,10 +122,21 @@ public class FilesystemBoxRepository implements BoxRepository {
     private BoxProvider createBoxProviderFromFile(File file) {
         String filename = file.getName();
         List<String> parsedFilename = Arrays.asList(filename.split("_"));
+
         String provider = parsedFilename.get(2);
         if (provider.endsWith(".box")) {
             provider = provider.substring(0, provider.length() - 4);
         }
-        return new BoxProvider(hostPrefix + file.getAbsolutePath(), provider);
+        return new BoxProvider(
+                hostPrefix + file.getAbsolutePath(),
+                provider,
+                hashService.getHashType(),
+                hashService.getChecksum(file.getAbsolutePath())
+        );
+    }
+
+    private boolean containsValidBoxFile(File file) {
+        File[] files = file.listFiles(this::validateFilename);
+        return files.length > 0;
     }
 }

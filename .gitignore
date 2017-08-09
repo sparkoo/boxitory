@@ -25,3 +25,5 @@ nbdist/
 
 application.properties
 test_repository/
+/pom.xml.releaseBackup
+/release.properties

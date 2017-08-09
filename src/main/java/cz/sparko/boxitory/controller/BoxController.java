@@ -4,10 +4,11 @@ import cz.sparko.boxitory.conf.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.service.BoxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping(value = "/", method = RequestMethod.GET)
+@Controller
 public class BoxController {
     private BoxRepository boxRepository;
 
@@ -16,10 +17,16 @@ public class BoxController {
         this.boxRepository = boxRepository;
     }
 
-    @RequestMapping("{boxName}")
+    @RequestMapping(value = "/{boxName}", method = RequestMethod.GET)
     @ResponseBody
-    public Box getBoxes(@PathVariable String boxName) {
+    public Box box(@PathVariable String boxName) {
         return boxRepository.getBox(boxName)
-                .orElseThrow(() -> new NotFoundException("[" + boxName + "] does not exist"));
+                .orElseThrow(() -> new NotFoundException("box [" + boxName + "] does not exist"));
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("boxes", boxRepository.getBoxes());
+        return "index";
     }
 }

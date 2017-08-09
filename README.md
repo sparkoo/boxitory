@@ -8,6 +8,12 @@ is repository for Vagrant's Virtual Machine boxes, which can manage box versions
 
 By default, http server will start on port *8083*.
 
+#### Build status (travis-ci)
+
+devel [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=devel)](https://travis-ci.org/sparkoo/boxitory)
+
+master: [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=master)](https://travis-ci.org/sparkoo/boxitory)
+
 ## How it works
 
 *Boxitory* currently implements just filesystem box provider. That requires strict folder structure.
@@ -72,7 +78,22 @@ $ curl http://localhost:8083/f26
    * do define for example protocol or server, where boxes are placed
    * e.g.: `sftp://my_box_server:`
    * **default value**: *empty*
-
+ * `box.sort_desc`
+   * boolean value `true|false`
+   * when default or `false`, boxes are sorted by version in ascending order
+   * when `true`, boxes are sorted by version in descending order
+   * default value: `false`
+ * `box.checksum`
+   * string value: `disabled|md5|sha1|sha256`
+   * default value: `disabled`
+   * when default or `disabled` boxes output json not contains properties `checksumType` and `checksum`
+   * when `md5|sha1|sha256` boxes output json contains properties `checksumType` and `checksum` with coresponding values
+### Advanced Options
+ * `box.checksum_buffer_size`
+  * Box file is loaded to this buffer to calculate box checksums
+  * default value: `1024`
+   
+### How to configuration
 Configuration can be provided by `application.properties` file on classpath
 ```
 # application.properties

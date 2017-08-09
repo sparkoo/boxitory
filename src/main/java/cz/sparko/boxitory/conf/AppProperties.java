@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 public class AppProperties {
     private String home = ".";
     private String host_prefix = "";
+    private String checksum = "disabled";
     private boolean sort_desc = false;
+    private int checksum_buffer_size = 1024;
 
     public String getHome() {
         return home;
@@ -22,6 +24,14 @@ public class AppProperties {
         return sort_desc;
     }
 
+    public String getChecksum() {
+        return checksum;
+    }
+
+    public int getChecksum_buffer_size() {
+        return checksum_buffer_size;
+    }
+
     public void setSort_desc(boolean sort_desc) {
         this.sort_desc = sort_desc;
     }
@@ -32,5 +42,13 @@ public class AppProperties {
 
     public void setHost_prefix(String host_prefix) {
         this.host_prefix = host_prefix;
+    }
+
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
+    }
+
+    public void setChecksum_buffer_size(int checksum_buffer_size) {
+        this.checksum_buffer_size = checksum_buffer_size;
     }
 }
