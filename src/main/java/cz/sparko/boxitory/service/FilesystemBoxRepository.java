@@ -25,11 +25,14 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final HashService hashService;
     private final boolean sortDesc;
 
-    public FilesystemBoxRepository(AppProperties appProperties, HashService hashService) {
+    private final DescriptionProvider descriptionProvider;
+
+    public FilesystemBoxRepository(AppProperties appProperties, HashService hashService, DescriptionProvider descriptionProvider) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();
         this.hashService = hashService;
+        this.descriptionProvider = descriptionProvider;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
@@ -48,7 +51,7 @@ public class FilesystemBoxRepository implements BoxRepository {
         getBoxDir(boxName)
                 .ifPresent(d -> groupedBoxFiles.putAll(groupBoxFilesByVersion(d)));
 
-        List<BoxVersion> boxVersions = createBoxVersionsFromGroupedFiles(groupedBoxFiles);
+        List<BoxVersion> boxVersions = createBoxVersionsFromGroupedFiles(groupedBoxFiles, boxName);
         if (boxVersions.isEmpty()) {
             LOG.debug("no box versions found for [{}]", boxName);
             return Optional.empty();
@@ -98,10 +101,10 @@ public class FilesystemBoxRepository implements BoxRepository {
         return parsedFilename.get(1);
     }
 
-    private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles) {
+    private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles, String boxName) {
         List<BoxVersion> boxVersions = new ArrayList<>();
         groupedFiles.forEach(
-                (key, value) -> boxVersions.add(createBoxVersion(key, value))
+                (key, value) -> boxVersions.add(createBoxVersion(key, value, boxName))
         );
         Comparator<BoxVersion> versionComparator = Comparator.comparingInt(o -> Integer.parseInt(o.getVersion()));
         if (sortDesc) {
@@ -112,9 +115,10 @@ public class FilesystemBoxRepository implements BoxRepository {
         return boxVersions;
     }
 
-    private BoxVersion createBoxVersion(String version, List<File> fileList) {
+    private BoxVersion createBoxVersion(String version, List<File> fileList, String boxName) {
         return new BoxVersion(
                 version,
+                descriptionProvider.getDescription(boxName, version),
                 fileList.stream().map(this::createBoxProviderFromFile).collect(Collectors.toList())
         );
     }

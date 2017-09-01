@@ -5,6 +5,7 @@ import cz.sparko.boxitory.factory.HashServiceFactory;
 import cz.sparko.boxitory.service.BoxRepository;
 import cz.sparko.boxitory.service.FilesystemBoxRepository;
 import cz.sparko.boxitory.service.HashService;
+import cz.sparko.boxitory.service.NoopDescriptionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +24,6 @@ public class App {
     @Autowired
     public BoxRepository boxRepository(AppProperties appProperties) throws NoSuchAlgorithmException {
         HashService hashService = HashServiceFactory.createHashService(appProperties);
-        return new FilesystemBoxRepository(appProperties, hashService);
+        return new FilesystemBoxRepository(appProperties, hashService, new NoopDescriptionProvider());
     }
 }
