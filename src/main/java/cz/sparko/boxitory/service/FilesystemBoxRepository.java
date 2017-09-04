@@ -118,7 +118,7 @@ public class FilesystemBoxRepository implements BoxRepository {
     private BoxVersion createBoxVersion(String version, List<File> fileList, String boxName) {
         return new BoxVersion(
                 version,
-                descriptionProvider.getDescription(boxName, version),
+                descriptionProvider.getDescription(boxName, version).orElse(null),
                 fileList.stream().map(this::createBoxProviderFromFile).collect(Collectors.toList())
         );
     }

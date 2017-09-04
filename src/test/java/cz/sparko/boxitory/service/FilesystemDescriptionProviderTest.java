@@ -1,6 +1,5 @@
 package cz.sparko.boxitory.service;
 
-import ch.qos.logback.core.util.FileUtil;
 import cz.sparko.boxitory.conf.AppProperties;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterMethod;
@@ -13,7 +12,9 @@ import java.io.File;
 import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.testng.Assert.*;
+import static org.apache.commons.io.FileUtils.writeStringToFile;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 public class FilesystemDescriptionProviderTest {
     private final String TEST_HOME = "target/test_repository";
@@ -22,12 +23,16 @@ public class FilesystemDescriptionProviderTest {
 
     private AppProperties testAppProperties;
 
+    private DescriptionProvider descriptionProvider;
+
     @BeforeClass
     public void setUp() throws IOException {
         testAppProperties = new AppProperties();
         testAppProperties.setHome(TEST_HOME);
         testAppProperties.setHost_prefix(TEST_BOX_PREFIX);
         testHomeDir = new File(TEST_HOME);
+
+        descriptionProvider = new FilesystemDescriptionProvider(testHomeDir);
     }
 
     @BeforeMethod
@@ -42,7 +47,7 @@ public class FilesystemDescriptionProviderTest {
 
     @DataProvider
     public Object[][] validDescriptions() {
-        return new Object[][] {
+        return new Object[][]{
                 {"f25", "1", "this is description of version 1"},
                 {"f25", "1234", "this is description of version 1234"},
                 {"f25", "2", "this is description of version 2"},
@@ -52,32 +57,108 @@ public class FilesystemDescriptionProviderTest {
     }
 
     @Test(dataProvider = "validDescriptions")
-    public void givenValidDescriptionFile_whenGetDescription_thenReturnProperDescription(String box, String version, String description) throws IOException {
+    public void givenValidDescriptionFile_whenGetDescription_thenReturnProperDescription(String box, String version,
+                                                                                         String description)
+            throws IOException {
         createDirWithValidDescriptions();
 
-        DescriptionProvider descriptionProvider = new FilesystemDescriptionProvider(testHomeDir);
+        assertEquals(descriptionProvider.getDescription(box, version).get(), description);
+    }
 
-        assertEquals(descriptionProvider.getDescription(box, version), description);
+    @Test
+    public void givenNoDescriptionForVersion_whenGetDescription_thenReturnNull() throws IOException {
+        createDirWithValidDescriptions();
+
+        assertFalse(descriptionProvider.getDescription("f25", "666").isPresent());
+    }
+
+    @Test
+    public void givenMultipleDescriptionsForVersion_whenGetDescription_thenReturnLatest() throws IOException {
+        createDirWithValidDescriptions();
+        File f25 = new File(testHomeDir.getAbsolutePath() + "/f25");
+        File descriptionFile = new File(f25.getAbsolutePath() + "/" + FilesystemDescriptionProvider.DESCRIPTIONS_FILE);
+        writeStringToFile(descriptionFile, "1;;;this is second description of version 1\n", UTF_8, true);
+        writeStringToFile(descriptionFile, "2;;;this is second description of version 2\n", UTF_8, true);
+
+        assertEquals(descriptionProvider.getDescription("f25", "1").get(), "this is second description of version 1");
+        assertEquals(descriptionProvider.getDescription("f25", "2").get(), "this is second description of version 2");
+    }
+
+    @Test
+    public void givenInvalidFileButOneLineMatches_whenGet_thenReturnValidDescription() throws IOException {
+        File versionFile = createDescriptionFileForBox("f27", false);
+        writeStringToFile(versionFile, "blablabla blebleble fbsajl lsa\n", UTF_8, true);
+        writeStringToFile(versionFile, "sfqfqs;;;qweeeee\n", UTF_8, true);
+        writeStringToFile(versionFile, "1;;;this is valid line\n", UTF_8, true);
+        writeStringToFile(versionFile, "\n", UTF_8, true);
+        writeStringToFile(versionFile, "1234564789\n", UTF_8, true);
+        writeStringToFile(versionFile, "     \n", UTF_8, true);
+
+        assertEquals(descriptionProvider.getDescription("f27", "1").get(), "this is valid line");
+    }
+
+    @Test
+    public void givenInvalidFile_whenGet_thenReturnNull() throws IOException {
+        File versionFile = createDescriptionFileForBox("f27", false);
+        writeStringToFile(versionFile, "blablabla blebleble fbsajl lsa\n", UTF_8, true);
+        writeStringToFile(versionFile, "sfqfqs;;;qweeeee\n", UTF_8, true);
+        writeStringToFile(versionFile, "1;;this is valid line\n", UTF_8, true);
+        writeStringToFile(versionFile, "\n", UTF_8, true);
+        writeStringToFile(versionFile, "1234564789\n", UTF_8, true);
+        writeStringToFile(versionFile, "     \n", UTF_8, true);
+
+        assertFalse(descriptionProvider.getDescription("f27", "1").isPresent());
+    }
+
+    @Test
+    public void givenNoFileExists_whenGet_thenReturnNull() throws IOException {
+        createDirWithValidDescriptions();
+        assertFalse(descriptionProvider.getDescription("f27", "1").isPresent());
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void givenNullBox_whenGet_thenThrowNpe() {
+        descriptionProvider.getDescription(null, "1");
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
+    public void givenNullVersion_whenGet_thenThrowNpe() {
+        descriptionProvider.getDescription("1", null);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void givenEmptyBox_whenGet_thenThrowIae() {
+        descriptionProvider.getDescription("", "1");
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void givenEmptyVersion_whenGet_thenThrowIae() {
+        descriptionProvider.getDescription("1", "");
     }
 
     private void createDirWithValidDescriptions() throws IOException {
-        File f25 = new File(testHomeDir.getAbsolutePath() + "/f25");
-        f25.mkdir();
-        File descriptionFile = new File(f25.getAbsolutePath() + "/" + FilesystemDescriptionProvider.DESCRIPTIONS_FILE);
-        writeFileHeader(descriptionFile);
-        FileUtils.writeStringToFile(descriptionFile, "1;;;this is description of version 1\n", UTF_8, true);
-        FileUtils.writeStringToFile(descriptionFile, "1234;;;this is description of version 1234\n", UTF_8, true);
-        FileUtils.writeStringToFile(descriptionFile, "2;;;this is description of version 2\n", UTF_8, true);
-        FileUtils.writeStringToFile(descriptionFile, "56498981;;;this is description of version 56498981\n", UTF_8, true);
+        File descriptionFile = createDescriptionFileForBox("f25", true);
+        writeStringToFile(descriptionFile, "1;;;this is description of version 1\n", UTF_8, true);
+        writeStringToFile(descriptionFile, "1234;;;this is description of version 1234\n", UTF_8, true);
+        writeStringToFile(descriptionFile, "2;;;this is description of version 2\n", UTF_8, true);
+        writeStringToFile(descriptionFile, "56498981;;;this is description of version 56498981\n", UTF_8, true);
 
-        File f26 = new File(testHomeDir.getAbsolutePath() + "/f26");
-        f26.mkdir();
-        descriptionFile = new File(f26.getAbsolutePath() + "/" + FilesystemDescriptionProvider.DESCRIPTIONS_FILE);
+        descriptionFile = createDescriptionFileForBox("f26", true);
         writeFileHeader(descriptionFile);
-        FileUtils.writeStringToFile(descriptionFile, "17;;;this is desc of v 17\n", UTF_8, true);
+        writeStringToFile(descriptionFile, "17;;;this is desc of v 17\n", UTF_8, true);
+    }
+
+    private File createDescriptionFileForBox(String box, boolean header) throws IOException {
+        File boxDir = new File(testHomeDir.getAbsolutePath() + "/" + box);
+        boxDir.mkdir();
+        File descriptionFile = new File(boxDir.getAbsolutePath() + "/" + FilesystemDescriptionProvider.DESCRIPTIONS_FILE);
+        if (header) {
+            writeFileHeader(descriptionFile);
+        }
+        return descriptionFile;
     }
 
     private void writeFileHeader(File descriptionFile) throws IOException {
-        FileUtils.writeStringToFile(descriptionFile, "version;;;description\n", UTF_8);
+        writeStringToFile(descriptionFile, "version;;;description\n", UTF_8);
     }
 }
