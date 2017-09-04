@@ -120,7 +120,7 @@ public class FilesystemBoxRepositoryTest {
                                                 "vmware", null, null)
                                 )),
                                 new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                        new BoxProvider(composePath("f28",  "2", "virtualbox"),
+                                        new BoxProvider(composePath("f28", "2", "virtualbox"),
                                                 "virtualbox", null, null)
                                 ))
                         )))
@@ -132,7 +132,8 @@ public class FilesystemBoxRepositoryTest {
 
     @Test(dataProvider = "boxes")
     public void givenRepository_whenGetBox_thenGetWhenFound(String boxName, Optional<Box> expectedResult) {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(), new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
 
         Optional<Box> providedBox = boxRepository.getBox(boxName);
@@ -145,7 +146,8 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortAscending_whenGetBox_thenVersionsSortedAsc() {
         testAppProperties.setSort_desc(false);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(), new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "1");
@@ -157,7 +159,8 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortDescending_whenGetBox_thenVersionsSortedDesc() {
         testAppProperties.setSort_desc(true);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(), new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "3");
@@ -167,7 +170,8 @@ public class FilesystemBoxRepositoryTest {
 
     @Test
     public void givenValidRepositoryWithBoxes_whenIndex_thenGetValidBoxes() {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(), new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
         List<String> boxes = boxRepository.getBoxes();
         assertTrue(boxes.containsAll(Arrays.asList("f25", "f26", "f28", "f29")));

@@ -27,7 +27,9 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private final DescriptionProvider descriptionProvider;
 
-    public FilesystemBoxRepository(AppProperties appProperties, HashService hashService, DescriptionProvider descriptionProvider) {
+    public FilesystemBoxRepository(AppProperties appProperties,
+                                   HashService hashService,
+                                   DescriptionProvider descriptionProvider) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();

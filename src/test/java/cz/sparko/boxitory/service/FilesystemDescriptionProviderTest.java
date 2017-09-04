@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static cz.sparko.boxitory.service.FilesystemDescriptionProvider.DESCRIPTIONS_FILE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.testng.Assert.assertEquals;
@@ -76,7 +77,7 @@ public class FilesystemDescriptionProviderTest {
     public void givenMultipleDescriptionsForVersion_whenGetDescription_thenReturnLatest() throws IOException {
         createDirWithValidDescriptions();
         File f25 = new File(testHomeDir.getAbsolutePath() + "/f25");
-        File descriptionFile = new File(f25.getAbsolutePath() + "/" + FilesystemDescriptionProvider.DESCRIPTIONS_FILE);
+        File descriptionFile = new File(f25.getAbsolutePath() + "/" + DESCRIPTIONS_FILE);
         writeStringToFile(descriptionFile, "1;;;this is second description of version 1\n", UTF_8, true);
         writeStringToFile(descriptionFile, "2;;;this is second description of version 2\n", UTF_8, true);
 
@@ -151,11 +152,11 @@ public class FilesystemDescriptionProviderTest {
     private File createDescriptionFileForBox(String box, boolean header) throws IOException {
         File boxDir = new File(testHomeDir.getAbsolutePath() + "/" + box);
         boxDir.mkdir();
-        File descriptionFile = new File(boxDir.getAbsolutePath() + "/" + FilesystemDescriptionProvider.DESCRIPTIONS_FILE);
+        File descriptionsFile = new File(boxDir.getAbsolutePath() + "/" + DESCRIPTIONS_FILE);
         if (header) {
-            writeFileHeader(descriptionFile);
+            writeFileHeader(descriptionsFile);
         }
-        return descriptionFile;
+        return descriptionsFile;
     }
 
     private void writeFileHeader(File descriptionFile) throws IOException {
