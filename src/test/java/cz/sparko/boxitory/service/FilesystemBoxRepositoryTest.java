@@ -27,7 +27,7 @@ public class FilesystemBoxRepositoryTest {
 
     private final String TEST_HOME = "target/test_repository";
     private final String TEST_BOX_PREFIX = "sftp://my_test_server:";
-    private final String VERSION_DESCRIPTION = "this is description of version";
+    private final String VERSION_DESCRIPTION = null;
     private File testHomeDir;
 
     private AppProperties testAppProperties;

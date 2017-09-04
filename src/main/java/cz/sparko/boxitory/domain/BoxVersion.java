@@ -33,7 +33,7 @@ public class BoxVersion {
         BoxVersion that = (BoxVersion) o;
         return Objects.equals(version, that.version) &&
                 Objects.equals(description, that.description) &&
-                Objects.equals(providers, that.providers);
+                providers.containsAll(that.getProviders()) && that.getProviders().containsAll(providers);
     }
 
     @Override
