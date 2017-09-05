@@ -7,7 +7,6 @@ import cz.sparko.boxitory.service.DescriptionProvider;
 import cz.sparko.boxitory.service.FilesystemBoxRepository;
 import cz.sparko.boxitory.service.FilesystemDescriptionProvider;
 import cz.sparko.boxitory.service.HashService;
-import cz.sparko.boxitory.service.NoopDescriptionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
