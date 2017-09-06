@@ -61,7 +61,50 @@ $ curl http://localhost:8083/f26
           "name": "virtualbox"
         }
       ]
-    },
+    }
+  ]
+}
+```
+
+### Box version descriptions
+
+Each box version can have it's own description, which is then returned on HTTP API. Descriptions are stored in file `descriptions.csv`, which has to be placed beside `.box` files.
+
+```
+$ tree test_repository/
+test_repository/
+├── f25
+│   ├── descriptions.csv
+│   ├── f25_1_virtualbox.box
+│   ├── f25_1_virtualbox.box
+```
+
+Content of the file is in CSV format with `;;;` used as separator.
+
+```
+version;;;description
+1;;;this is description of version 1
+2;;;this is description of version 2
+```
+
+Then resulting JSON will look like this:
+```
+$ curl http://localhost:8083/f25
+{
+  "name": "f25",
+  "description": "f25",
+  "versions": [
+    {
+      "version": "1",
+      "description: "this is description of version 1",
+      "providers": [
+        {
+          "url": "sftp://my_box_server:/tmp/test_repository/f26/f26_1_virtualbox.box",
+          "name": "virtualbox"
+        }
+      ]
+    }
+    ...
   ]
 }
 ```

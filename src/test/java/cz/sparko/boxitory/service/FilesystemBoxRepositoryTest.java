@@ -27,6 +27,7 @@ public class FilesystemBoxRepositoryTest {
 
     private final String TEST_HOME = "target/test_repository";
     private final String TEST_BOX_PREFIX = "sftp://my_test_server:";
+    private final String VERSION_DESCRIPTION = null;
     private File testHomeDir;
 
     private AppProperties testAppProperties;
@@ -83,11 +84,11 @@ public class FilesystemBoxRepositoryTest {
         return new Object[][]{
                 {"f25", Optional.of(new Box("f25", "f25",
                         Arrays.asList(
-                                new BoxVersion("1", Collections.singletonList(
+                                new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
                                         new BoxProvider(composePath("f25", "1", "virtualbox"),
                                                 "virtualbox", null, null)
                                 )),
-                                new BoxVersion("2", Collections.singletonList(
+                                new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
                                         new BoxProvider(composePath("f25", "2", "virtualbox"),
                                                 "virtualbox", null, null)
                                 ))
@@ -95,15 +96,15 @@ public class FilesystemBoxRepositoryTest {
                 },
                 {"f26", Optional.of(new Box("f26", "f26",
                         Arrays.asList(
-                                new BoxVersion("1", Collections.singletonList(
+                                new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
                                         new BoxProvider(composePath("f26", "1", "virtualbox"),
                                                 "virtualbox", null, null)
                                 )),
-                                new BoxVersion("2", Collections.singletonList(
+                                new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
                                         new BoxProvider(composePath("f26", "2", "virtualbox"),
                                                 "virtualbox", null, null)
                                 )),
-                                new BoxVersion("3", Collections.singletonList(
+                                new BoxVersion("3", VERSION_DESCRIPTION, Collections.singletonList(
                                         new BoxProvider(composePath("f26", "3", "virtualbox"),
                                                 "virtualbox", null, null)
                                 ))
@@ -112,14 +113,14 @@ public class FilesystemBoxRepositoryTest {
                 {"f27", Optional.empty()},
                 {"f28", Optional.of(new Box("f28", "f28",
                         Arrays.asList(
-                                new BoxVersion("1", Arrays.asList(
+                                new BoxVersion("1", VERSION_DESCRIPTION, Arrays.asList(
                                         new BoxProvider(composePath("f28", "1", "virtualbox"),
                                                 "virtualbox", null, null),
                                         new BoxProvider(composePath("f28", "1", "vmware"),
                                                 "vmware", null, null)
                                 )),
-                                new BoxVersion("2", Collections.singletonList(
-                                        new BoxProvider(composePath("f28",  "2", "virtualbox"),
+                                new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
+                                        new BoxProvider(composePath("f28", "2", "virtualbox"),
                                                 "virtualbox", null, null)
                                 ))
                         )))
@@ -131,7 +132,8 @@ public class FilesystemBoxRepositoryTest {
 
     @Test(dataProvider = "boxes")
     public void givenRepository_whenGetBox_thenGetWhenFound(String boxName, Optional<Box> expectedResult) {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
 
         Optional<Box> providedBox = boxRepository.getBox(boxName);
@@ -144,7 +146,8 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortAscending_whenGetBox_thenVersionsSortedAsc() {
         testAppProperties.setSort_desc(false);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "1");
@@ -156,7 +159,8 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortDescending_whenGetBox_thenVersionsSortedDesc() {
         testAppProperties.setSort_desc(true);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "3");
@@ -166,7 +170,8 @@ public class FilesystemBoxRepositoryTest {
 
     @Test
     public void givenValidRepositoryWithBoxes_whenIndex_thenGetValidBoxes() {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService());
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
 
         List<String> boxes = boxRepository.getBoxes();
         assertTrue(boxes.containsAll(Arrays.asList("f25", "f26", "f28", "f29")));
