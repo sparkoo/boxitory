@@ -89,7 +89,7 @@ version;;;description
 
 Then resulting JSON will look like this:
 ```
-$ curl http://localhost:8083/f26
+$ curl http://localhost:8083/f25
 {
   "name": "f25",
   "description": "f25",
