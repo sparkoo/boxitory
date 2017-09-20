@@ -2,7 +2,7 @@
 
 is repository for Vagrant's Virtual Machine boxes, which can manage box versions and provides *Vagrant* compatible http interface. Boxes are stored on local filesystem.
 
-[Latest release](https://github.com/sparkoo/boxitory/releases/latest)
+Download [Latest release](https://github.com/sparkoo/boxitory/releases/latest)
 
 For more info how it works, how to configure, ... [See Wiki](https://github.com/sparkoo/boxitory/wiki/Configuration)
 
