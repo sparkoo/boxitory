@@ -1,6 +1,8 @@
 # Boxitory
 
-is repository for Vagrant's Virtual Machine boxes, which can manage box versions and provides *Vagrant* compatible http interface.
+is repository for Vagrant's Virtual Machine boxes, which can manage box versions and provides *Vagrant* compatible http interface. Boxes are stored on local filesystem.
+
+For more info how it works, how to configure, ... [See Wiki](https://github.com/sparkoo/boxitory/wiki/Configuration)
 
 ## Build & run
 
@@ -14,100 +16,4 @@ devel [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=devel)]
 
 master: [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=master)](https://travis-ci.org/sparkoo/boxitory)
 
-## How it works
 
-*Boxitory* currently implements just filesystem box provider. That requires strict folder structure.
-
-### Box files on filesystem
-
-There must be one home folder for all boxes with subfolders for each box type. Individial box versions must be named `{name}_{version}_{provider}.box`. 
-
-See example below:
-```
-$ tree test_repository/
-test_repository/
-├── f25
-│   ├── f25_1_virtualbox.box
-│   └── f25_2_virtualbox.box
-├── f26
-│   ├── f26_1_virtualbox.box
-│   ├── f26_2_virtualbox.box
-│   └── f26_3_virtualbox.box
-```
-
-### Http interface
-
-Server starts at port *8083* and boxes can be requested on `http://hostname:port/box_name` for example:
-```
-$ curl http://localhost:8083/f26
-{
-  "name": "f26",
-  "description": "f26",
-  "versions": [
-    {
-      "version": "1",
-      "providers": [
-        {
-          "url": "sftp://my_box_server:/tmp/test_repository/f26/f26_1_virtualbox.box",
-          "name": "virtualbox"
-        }
-      ]
-    },
-    {
-      "version": "2",
-      "providers": [
-        {
-          "url": "sftp://my_box_server:/tmp/test_repository/f26/f26_2_virtualbox.box",
-          "name": "virtualbox"
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Box version descriptions
-
-Each box version can have it's own description, which is then returned on HTTP API. Descriptions are stored in file `descriptions.csv`, which has to be placed beside `.box` files.
-
-```
-$ tree test_repository/
-test_repository/
-├── f25
-│   ├── descriptions.csv
-│   ├── f25_1_virtualbox.box
-│   ├── f25_1_virtualbox.box
-```
-
-Content of the file is in CSV format with `;;;` used as separator.
-
-```
-version;;;description
-1;;;this is description of version 1
-2;;;this is description of version 2
-```
-
-Then resulting JSON will look like this:
-```
-$ curl http://localhost:8083/f25
-{
-  "name": "f25",
-  "description": "f25",
-  "versions": [
-    {
-      "version": "1",
-      "description: "this is description of version 1",
-      "providers": [
-        {
-          "url": "sftp://my_box_server:/tmp/test_repository/f26/f26_1_virtualbox.box",
-          "name": "virtualbox"
-        }
-      ]
-    }
-    ...
-  ]
-}
-```
-
-## Configuration
-[See Wiki](https://github.com/sparkoo/boxitory/wiki/Configuration)
