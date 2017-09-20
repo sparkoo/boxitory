@@ -4,7 +4,7 @@ is repository for Vagrant's Virtual Machine boxes, which can manage box versions
 
 Download [Latest release](https://github.com/sparkoo/boxitory/releases/latest)
 
-For more info how it works, how to configure, ... [See Wiki](https://github.com/sparkoo/boxitory/wiki/Configuration)
+For more info how it works, how to configure, ... [See Wiki](https://github.com/sparkoo/boxitory/wiki)
 
 ## Build & run
 
