@@ -2,11 +2,15 @@ package cz.sparko.boxitory.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BoxVersion {
+    public static final Comparator<BoxVersion> VERSION_COMPARATOR =
+            Comparator.comparingInt(o -> Integer.parseInt(o.getVersion()));
+
     private final String version;
     private final String description;
     private final List<BoxProvider> providers;

@@ -10,12 +10,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static cz.sparko.boxitory.domain.BoxVersion.VERSION_COMPARATOR;
 
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
@@ -108,11 +109,10 @@ public class FilesystemBoxRepository implements BoxRepository {
         groupedFiles.forEach(
                 (key, value) -> boxVersions.add(createBoxVersion(key, value, boxName))
         );
-        Comparator<BoxVersion> versionComparator = Comparator.comparingInt(o -> Integer.parseInt(o.getVersion()));
         if (sortDesc) {
-            boxVersions.sort(versionComparator.reversed());
+            boxVersions.sort(VERSION_COMPARATOR.reversed());
         } else {
-            boxVersions.sort(versionComparator);
+            boxVersions.sort(VERSION_COMPARATOR);
         }
         return boxVersions;
     }
