@@ -22,7 +22,7 @@ public class BoxController {
     @ResponseBody
     public Box box(@PathVariable String boxName) {
         return boxRepository.getBox(boxName)
-                .orElseThrow(() -> new NotFoundException("box [" + boxName + "] does not exist"));
+                .orElseThrow(() -> NotFoundException.boxNotFound(boxName));
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -34,10 +34,12 @@ public class BoxController {
     @RequestMapping(value = "/{boxName}/latestVersion", method = RequestMethod.GET)
     @ResponseBody
     public String latestBoxVersion(@PathVariable String boxName) {
-        return box(boxName).getVersions().stream()
+        return boxRepository.getBox(boxName)
+                .orElseThrow(() -> NotFoundException.boxNotFound(boxName))
+                .getVersions().stream()
                 .sorted(BoxVersion.VERSION_COMPARATOR.reversed())
                 .findFirst()
                 .map(BoxVersion::getVersion)
-                .orElseThrow(() -> new NotFoundException("box [" + boxName + "] does not exist"));
+                .orElseThrow(() -> NotFoundException.boxNotFound(boxName));
     }
 }
