@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cz.sparko.boxitory.domain.BoxVersion.VERSION_COMPARATOR;
 
@@ -41,7 +42,7 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     @Override
     public List<String> getBoxes() {
-        return Arrays.stream(boxHome.listFiles(File::isDirectory))
+        return listPotencialBoxDirs()
                 .filter(this::containsValidBoxFile)
                 .map(File::getName)
                 .sorted()
@@ -65,14 +66,17 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private Optional<File> getBoxDir(String boxName) {
-        File[] boxesHomeFiles = boxHome.listFiles();
-        if (boxesHomeFiles == null) {
-            throw new IllegalStateException("[" + boxHome.getAbsolutePath() + "] is not a valid folder");
-        }
-        return Arrays.stream(boxesHomeFiles)
+        return listPotencialBoxDirs()
                 .filter(File::isDirectory)
                 .filter(f -> f.getName().equals(boxName))
                 .findFirst();
+    }
+
+    private Stream<File> listPotencialBoxDirs() {
+        File[] potencialBoxDirs = Optional.ofNullable(boxHome.listFiles(File::isDirectory))
+                .orElseThrow(() -> new IllegalStateException(
+                        "Repository directory [" + boxHome.getAbsolutePath() + "] is not a valid directory."));
+        return Arrays.stream(potencialBoxDirs);
     }
 
     private Map<String, List<File>> groupBoxFilesByVersion(File boxDir) {
@@ -143,6 +147,6 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private boolean containsValidBoxFile(File file) {
         File[] files = file.listFiles(this::validateFilename);
-        return files.length > 0;
+        return files != null && files.length > 0;
     }
 }

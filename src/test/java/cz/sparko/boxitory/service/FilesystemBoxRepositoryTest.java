@@ -1,6 +1,7 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
+import cz.sparko.boxitory.conf.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxVersion;
 import cz.sparko.boxitory.domain.BoxProvider;
@@ -8,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -34,12 +36,21 @@ public class FilesystemBoxRepositoryTest {
 
     @BeforeClass
     public void setUp() throws IOException {
-        testAppProperties = new AppProperties();
-        testAppProperties.setHome(TEST_HOME);
-        testAppProperties.setHost_prefix(TEST_BOX_PREFIX);
         testHomeDir = new File(TEST_HOME);
 
         createTestFolderStructure();
+    }
+
+    @BeforeMethod
+    public void testSetUp() {
+        testAppProperties = new AppProperties();
+        testAppProperties.setHome(TEST_HOME);
+        testAppProperties.setHost_prefix(TEST_BOX_PREFIX);
+    }
+
+    @AfterClass
+    public void tearDown() throws IOException {
+        FileUtils.deleteDirectory(testHomeDir);
     }
 
     private void createTestFolderStructure() throws IOException {
@@ -72,11 +83,6 @@ public class FilesystemBoxRepositoryTest {
         new File(f29.getAbsolutePath() + "/f29_1_virtualbox.box").createNewFile();
         new File(f29.getAbsolutePath() + "/f29_3_virtualbox.box").createNewFile();
         new File(f29.getAbsolutePath() + "/f29_2_virtualbox.box").createNewFile();
-    }
-
-    @AfterClass
-    public void tearDown() throws IOException {
-        FileUtils.deleteDirectory(testHomeDir);
     }
 
     @DataProvider
@@ -135,7 +141,6 @@ public class FilesystemBoxRepositoryTest {
         BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
                 new NoopDescriptionProvider());
 
-
         Optional<Box> providedBox = boxRepository.getBox(boxName);
 
         assertEquals(providedBox.isPresent(), expectedResult.isPresent());
@@ -169,13 +174,29 @@ public class FilesystemBoxRepositoryTest {
     }
 
     @Test
-    public void givenValidRepositoryWithBoxes_whenIndex_thenGetValidBoxes() {
+    public void givenValidRepositoryWithBoxes_whenGetBoxes_thenGetValidBoxes() {
         BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
                 new NoopDescriptionProvider());
 
         List<String> boxes = boxRepository.getBoxes();
         assertTrue(boxes.containsAll(Arrays.asList("f25", "f26", "f28", "f29")));
-        assertFalse(boxes.containsAll(Arrays.asList("f27")));
+        assertFalse(boxes.containsAll(Collections.singletonList("f27")));
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void givenNonExistingRepositoryDir_whenGetBoxes_thenThrowNotFoundException() {
+        testAppProperties.setHome("/some/not/existing/dir");
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
+        boxRepository.getBoxes();
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void givenNonExistingRepositoryDir_whenGetBox_thenThrowNotFoundException() {
+        testAppProperties.setHome("/some/not/existing/dir");
+        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider());
+        boxRepository.getBox("invalid_repo_dir");
     }
 
     private String composePath(String boxName, String version, String provider) {
