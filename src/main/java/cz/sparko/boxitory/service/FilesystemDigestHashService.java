@@ -49,8 +49,8 @@ public class FilesystemDigestHashService implements HashService {
         return getHash(messageDigest.digest());
     }
 
-    private String getHash(byte[] diggestBytes) {
-        return DatatypeConverter.printHexBinary(diggestBytes).toLowerCase();
+    private String getHash(byte[] digestBytes) {
+        return DatatypeConverter.printHexBinary(digestBytes).toLowerCase();
     }
 
     @Override
