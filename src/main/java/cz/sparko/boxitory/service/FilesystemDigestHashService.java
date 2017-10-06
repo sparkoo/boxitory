@@ -1,6 +1,7 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
+import cz.sparko.boxitory.factory.HashServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +16,16 @@ import java.util.Objects;
 public class FilesystemDigestHashService implements HashService {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemDigestHashService.class);
-    private MessageDigest messageDigest;
-    private int streamBufferLength;
+    private final MessageDigest messageDigest;
+    private final int streamBufferLength;
+    private final HashStore hashStore;
+    private final HashServiceFactory.HashAlgorithm hashAlgorithm;
 
-    public FilesystemDigestHashService(MessageDigest messageDigest, AppProperties appProperties) {
+    public FilesystemDigestHashService(MessageDigest messageDigest, HashStore hashStore, AppProperties appProperties) {
+        this.hashAlgorithm = appProperties.getChecksum();
         this.messageDigest = messageDigest;
         streamBufferLength = appProperties.getChecksum_buffer_size();
+        this.hashStore = hashStore;
     }
 
     @Override
@@ -46,7 +51,9 @@ public class FilesystemDigestHashService implements HashService {
             );
         }
 
-        return getHash(messageDigest.digest());
+        String calculatedHash = getHash(messageDigest.digest());
+        hashStore.persist(string, calculatedHash, hashAlgorithm);
+        return calculatedHash;
     }
 
     private String getHash(byte[] digestBytes) {
