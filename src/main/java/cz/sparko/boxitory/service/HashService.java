@@ -2,7 +2,7 @@ package cz.sparko.boxitory.service;
 
 public interface HashService {
     String getHashType();
-    String getChecksum(String string);
+    String getChecksum(String box);
 
     enum HashAlgorithm {
         MD5("MD5", ".md5"),
