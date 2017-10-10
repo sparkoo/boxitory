@@ -16,7 +16,8 @@ public class HashServiceFactory {
         if (algorithm == HashAlgoritm.DISABLED) {
             return new NoopHashService();
         } else {
-            return new FilesystemDigestHashService(MessageDigest.getInstance(algorithm.getMessageDigestName()), appProperties);
+            return new FilesystemDigestHashService(
+                    MessageDigest.getInstance(algorithm.getMessageDigestName()), appProperties);
         }
     }
 }

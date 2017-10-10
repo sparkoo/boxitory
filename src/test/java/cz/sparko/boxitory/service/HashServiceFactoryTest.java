@@ -19,15 +19,20 @@ public class HashServiceFactoryTest {
     @DataProvider
     public Object[][] hashServiceTypes() throws NoSuchAlgorithmException {
         return new Object[][]{
-                {HashAlgoritm.MD5, new FilesystemDigestHashService(MessageDigest.getInstance("MD5"), new AppProperties())},
-                {HashAlgoritm.SHA1, new FilesystemDigestHashService(MessageDigest.getInstance("SHA-1"), new AppProperties())},
-                {HashAlgoritm.SHA256, new FilesystemDigestHashService(MessageDigest.getInstance("SHA-256"), new AppProperties())},
+                {HashAlgoritm.MD5, new FilesystemDigestHashService(MessageDigest.getInstance("MD5"),
+                        new AppProperties())},
+                {HashAlgoritm.SHA1, new FilesystemDigestHashService(MessageDigest.getInstance("SHA-1"),
+                        new AppProperties())},
+                {HashAlgoritm.SHA256, new FilesystemDigestHashService(MessageDigest.getInstance("SHA-256"),
+                        new AppProperties())},
                 {HashAlgoritm.DISABLED, new NoopHashService()}
         };
     }
 
     @Test(dataProvider = "hashServiceTypes")
-    public void givenFactory_whenCreateHashService_thenGetExpectedInstance(HashAlgoritm type, HashService expectedService) throws NoSuchAlgorithmException {
+    public void givenFactory_whenCreateHashService_thenGetExpectedInstance(HashAlgoritm type,
+                                                                           HashService expectedService)
+            throws NoSuchAlgorithmException {
         AppProperties appProperties = new AppProperties();
         appProperties.setChecksum(type);
         HashService hashService = HashServiceFactory.createHashService(appProperties);
