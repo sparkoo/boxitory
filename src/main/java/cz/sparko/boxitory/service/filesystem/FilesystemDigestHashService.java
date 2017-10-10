@@ -35,8 +35,15 @@ public class FilesystemDigestHashService implements HashService {
     }
 
     @Override
-    public String getChecksum(String string) {
-        try (InputStream boxDataStream = Files.newInputStream(new File(string).toPath())) {
+    public String getChecksum(String box) {
+        final String hash = hashStore.loadHash(box, hashAlgorithm)
+                .orElseGet(() -> calculateHash(box));
+        hashStore.persist(box, hash, hashAlgorithm);
+        return hash;
+    }
+
+    private String calculateHash(String box) {
+        try (InputStream boxDataStream = Files.newInputStream(new File(box).toPath())) {
             LOG.trace("buffering box data (buffer size [{}]b) ...", streamBufferLength);
             final byte[] buffer = new byte[streamBufferLength];
             int read = boxDataStream.read(buffer, 0, streamBufferLength);
@@ -46,15 +53,13 @@ public class FilesystemDigestHashService implements HashService {
                 read = boxDataStream.read(buffer, 0, streamBufferLength);
             }
         } catch (IOException e) {
-            LOG.error("Error during processing file [{}], message: [{}]", string, e.getMessage());
+            LOG.error("Error during processing file [{}], message: [{}]", box, e.getMessage());
             throw new RuntimeException(
-                    "Error while getting checksum for file " + string + " reason: " + e.getMessage(), e
+                    "Error while getting checksum for file " + box + " reason: " + e.getMessage(), e
             );
         }
 
-        String calculatedHash = getHash(messageDigest.digest());
-        hashStore.persist(string, calculatedHash, hashAlgorithm);
-        return calculatedHash;
+        return getHash(messageDigest.digest());
     }
 
     private String getHash(byte[] digestBytes) {
