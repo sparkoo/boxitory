@@ -2,7 +2,7 @@ package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.factory.HashServiceFactory;
-import cz.sparko.boxitory.factory.HashServiceFactory.HashAlgoritm;
+import cz.sparko.boxitory.service.HashService.HashAlgoritm;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

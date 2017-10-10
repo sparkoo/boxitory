@@ -1,6 +1,6 @@
 package cz.sparko.boxitory.conf;
 
-import cz.sparko.boxitory.factory.HashServiceFactory.HashAlgoritm;
+import cz.sparko.boxitory.service.HashService.HashAlgoritm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
