@@ -75,7 +75,8 @@ public class FilesystemDigestHashServiceTest {
     @Test(dataProvider = "filesAndHashes")
     public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(String algorithm, File file, String
             expectedChecksum) throws NoSuchAlgorithmException {
-        HashService hashService = new FilesystemDigestHashService(MessageDigest.getInstance(algorithm), new AppProperties());
+        HashService hashService = new FilesystemDigestHashService(
+                MessageDigest.getInstance(algorithm), new AppProperties());
 
         String checksum = hashService.getChecksum(file.getAbsolutePath());
 
