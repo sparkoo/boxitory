@@ -4,7 +4,7 @@ public interface HashService {
     String getHashType();
     String getChecksum(String string);
 
-    enum HashAlgoritm {
+    enum HashAlgorithm {
         MD5("MD5"),
         SHA1("SHA-1"),
         SHA256("SHA-256"),
@@ -12,7 +12,7 @@ public interface HashService {
 
         private final String messageDigestName;
 
-        HashAlgoritm(String messageDigestName) {
+        HashAlgorithm(String messageDigestName) {
             this.messageDigestName = messageDigestName;
         }
 

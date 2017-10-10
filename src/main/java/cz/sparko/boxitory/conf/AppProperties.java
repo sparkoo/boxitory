@@ -1,6 +1,6 @@
 package cz.sparko.boxitory.conf;
 
-import cz.sparko.boxitory.service.HashService.HashAlgoritm;
+import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class AppProperties {
     private String home = ".";
     private String host_prefix = "";
-    private HashAlgoritm checksum = HashAlgoritm.DISABLED;
+    private HashAlgorithm checksum = HashAlgorithm.DISABLED;
     private boolean sort_desc = false;
     private int checksum_buffer_size = 1024;
 
@@ -25,7 +25,7 @@ public class AppProperties {
         return sort_desc;
     }
 
-    public HashAlgoritm getChecksum() {
+    public HashAlgorithm getChecksum() {
         return checksum;
     }
 
@@ -45,7 +45,7 @@ public class AppProperties {
         this.host_prefix = host_prefix;
     }
 
-    public void setChecksum(HashAlgoritm checksum) {
+    public void setChecksum(HashAlgorithm checksum) {
         this.checksum = checksum;
     }
 
