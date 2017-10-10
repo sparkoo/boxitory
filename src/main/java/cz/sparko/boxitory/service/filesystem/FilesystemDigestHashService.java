@@ -43,6 +43,7 @@ public class FilesystemDigestHashService implements HashService {
     }
 
     private String calculateHash(String box) {
+        LOG.debug("calculating [{}] hash for box [{}]", hashAlgorithm.name(), box);
         try (InputStream boxDataStream = Files.newInputStream(new File(box).toPath())) {
             LOG.trace("buffering box data (buffer size [{}]b) ...", streamBufferLength);
             final byte[] buffer = new byte[streamBufferLength];
