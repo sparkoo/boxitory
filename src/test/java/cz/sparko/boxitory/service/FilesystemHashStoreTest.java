@@ -1,6 +1,7 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.factory.HashServiceFactory;
+import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -14,10 +15,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
 
-import static cz.sparko.boxitory.factory.HashServiceFactory.HashAlgorithm.DISABLED;
-import static cz.sparko.boxitory.factory.HashServiceFactory.HashAlgorithm.MD5;
-import static cz.sparko.boxitory.factory.HashServiceFactory.HashAlgorithm.SHA1;
-import static cz.sparko.boxitory.factory.HashServiceFactory.HashAlgorithm.SHA256;
+import static cz.sparko.boxitory.service.HashService.HashAlgorithm.DISABLED;
+import static cz.sparko.boxitory.service.HashService.HashAlgorithm.MD5;
+import static cz.sparko.boxitory.service.HashService.HashAlgorithm.SHA1;
+import static cz.sparko.boxitory.service.HashService.HashAlgorithm.SHA256;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -62,7 +63,7 @@ public class FilesystemHashStoreTest {
 
     @Test(dataProvider = "validData")
     public void givenExistingBoxAndEnabledAlg_whenPersist_thenHashIsProperlyStored
-            (HashServiceFactory.HashAlgorithm algorithm) throws IOException {
+            (HashAlgorithm algorithm) throws IOException {
         final String testHashValue = "blabol";
 
         this.hashStore.persist(validBoxPath, testHashValue, algorithm);
@@ -80,7 +81,7 @@ public class FilesystemHashStoreTest {
 
     @Test(dataProvider = "validData")
     public void givenExistingBoxEnabledAlgAndFileAlreadyExist_whenPersist_thenOriginalFileIsNotReplaced
-            (HashServiceFactory.HashAlgorithm algorithm) throws IOException {
+            (HashAlgorithm algorithm) throws IOException {
         final String testHashValue = "blabol";
 
         File existingFile = new File(validBoxPath + algorithm.getFileExtension());

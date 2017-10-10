@@ -1,7 +1,6 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
-import cz.sparko.boxitory.factory.HashServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class FilesystemDigestHashService implements HashService {
     private final MessageDigest messageDigest;
     private final int streamBufferLength;
     private final HashStore hashStore;
-    private final HashServiceFactory.HashAlgorithm hashAlgorithm;
+    private final HashAlgorithm hashAlgorithm;
 
     public FilesystemDigestHashService(MessageDigest messageDigest, HashStore hashStore, AppProperties appProperties) {
         this.hashAlgorithm = appProperties.getChecksum();

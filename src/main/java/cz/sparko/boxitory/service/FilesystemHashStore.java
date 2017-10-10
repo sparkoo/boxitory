@@ -1,6 +1,6 @@
 package cz.sparko.boxitory.service;
 
-import cz.sparko.boxitory.factory.HashServiceFactory.HashAlgorithm;
+import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
