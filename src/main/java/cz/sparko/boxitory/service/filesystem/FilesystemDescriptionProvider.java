@@ -1,5 +1,6 @@
-package cz.sparko.boxitory.service;
+package cz.sparko.boxitory.service.filesystem;
 
+import cz.sparko.boxitory.service.DescriptionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

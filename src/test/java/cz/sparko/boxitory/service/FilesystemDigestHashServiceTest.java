@@ -1,6 +1,8 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
+import cz.sparko.boxitory.service.filesystem.FilesystemDigestHashService;
+import cz.sparko.boxitory.service.noop.NoopHashStore;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.AfterClass;

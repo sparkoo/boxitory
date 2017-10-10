@@ -1,6 +1,7 @@
-package cz.sparko.boxitory.service;
+package cz.sparko.boxitory.service.noop;
 
 import cz.sparko.boxitory.service.HashService.HashAlgorithm;
+import cz.sparko.boxitory.service.HashStore;
 
 /**
  * Does nothing. Used when checksum persist is disabled.

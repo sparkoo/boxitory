@@ -1,5 +1,7 @@
-package cz.sparko.boxitory.service;
+package cz.sparko.boxitory.service.noop;
 
+
+import cz.sparko.boxitory.service.HashService;
 
 public class NoopHashService implements HashService {
 

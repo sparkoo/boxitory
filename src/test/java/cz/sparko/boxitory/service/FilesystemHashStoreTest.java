@@ -1,7 +1,7 @@
 package cz.sparko.boxitory.service;
 
-import cz.sparko.boxitory.factory.HashServiceFactory;
 import cz.sparko.boxitory.service.HashService.HashAlgorithm;
+import cz.sparko.boxitory.service.filesystem.FilesystemHashStore;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
