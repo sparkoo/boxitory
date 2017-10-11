@@ -154,7 +154,7 @@ public class FilesystemHashStoreTest {
     public void givenHashFileWithWrongName_whenLoad_thenNothingLoaded() throws IOException {
         HashAlgorithm algorithm = MD5;
         final String hash = "this_is_fake_hash";
-        createTestHashFile(hash + "  " + validBoxFilename, validBoxAbsPath + algorithm.getFileExtension() + "_some_noise");
+        createTestHashFile(hash + "  " + validBoxFilename, validBoxAbsPath + algorithm.getFileExtension() + "_noise");
 
         Optional<String> loadedHash = hashStore.loadHash(validBoxAbsPath, algorithm);
         assertFalse(loadedHash.isPresent());

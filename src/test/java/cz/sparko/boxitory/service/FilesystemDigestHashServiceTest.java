@@ -1,8 +1,8 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
+import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 import cz.sparko.boxitory.service.filesystem.FilesystemDigestHashService;
-import cz.sparko.boxitory.service.noop.NoopHashStore;
 import org.apache.commons.io.FileUtils;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,17 +60,17 @@ public class FilesystemDigestHashServiceTest {
     public Object[][] filesAndHashes() {
         return new Object[][]{
                 {
-                        HashService.HashAlgorithm.MD5,
+                        HashAlgorithm.MD5,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "86462c346f1358ddbf4f137fb5da43cf"
                 },
                 {
-                        HashService.HashAlgorithm.SHA1,
+                        HashAlgorithm.SHA1,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "6efeafd3d3304cf5d7fd37db2a7ddbaac09f425d"
                 },
                 {
-                        HashService.HashAlgorithm.SHA256,
+                        HashAlgorithm.SHA256,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "ae4fe7f29f683d3901d4c620ef2e3c7ed17ebb6813158efd6a16f81b71a0aa43"
                 }
@@ -78,8 +78,8 @@ public class FilesystemDigestHashServiceTest {
     }
 
     @Test(dataProvider = "filesAndHashes")
-    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(HashService.HashAlgorithm algorithm, File file, String
-            expectedChecksum) throws NoSuchAlgorithmException {
+    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(
+            HashAlgorithm algorithm, File file, String expectedChecksum) throws NoSuchAlgorithmException {
         HashService hashService = new FilesystemDigestHashService(
                 MessageDigest.getInstance(algorithm.getMessageDigestName()), algorithm, 1024);
 
@@ -93,7 +93,7 @@ public class FilesystemDigestHashServiceTest {
             throws NoSuchAlgorithmException {
         final String box = "box";
         final String hash = "hash";
-        final HashService.HashAlgorithm algorithm = MD5;
+        final HashAlgorithm algorithm = MD5;
 
         AppProperties properties = new AppProperties();
         properties.setChecksum(algorithm);
