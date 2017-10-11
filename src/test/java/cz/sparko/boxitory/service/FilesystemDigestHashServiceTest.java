@@ -60,17 +60,17 @@ public class FilesystemDigestHashServiceTest {
     public Object[][] filesAndHashes() {
         return new Object[][]{
                 {
-                        "MD5",
+                        HashService.HashAlgorithm.MD5,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "86462c346f1358ddbf4f137fb5da43cf"
                 },
                 {
-                        "SHA-1",
+                        HashService.HashAlgorithm.SHA1,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "6efeafd3d3304cf5d7fd37db2a7ddbaac09f425d"
                 },
                 {
-                        "SHA-256",
+                        HashService.HashAlgorithm.SHA256,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "ae4fe7f29f683d3901d4c620ef2e3c7ed17ebb6813158efd6a16f81b71a0aa43"
                 }
@@ -78,10 +78,10 @@ public class FilesystemDigestHashServiceTest {
     }
 
     @Test(dataProvider = "filesAndHashes")
-    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(String algorithm, File file, String
+    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(HashService.HashAlgorithm algorithm, File file, String
             expectedChecksum) throws NoSuchAlgorithmException {
-        HashService hashService = new FilesystemDigestHashService(MessageDigest.getInstance(algorithm), new
-                NoopHashStore(), new AppProperties());
+        HashService hashService = new FilesystemDigestHashService(
+                MessageDigest.getInstance(algorithm.getMessageDigestName()), algorithm, 1024);
 
         String checksum = hashService.getChecksum(file.getAbsolutePath());
 
@@ -101,8 +101,8 @@ public class FilesystemDigestHashServiceTest {
         HashStore hashStore = Mockito.mock(HashStore.class);
         Mockito.when(hashStore.loadHash(box, algorithm)).thenReturn(Optional.of(hash));
 
-        HashService hashService = new FilesystemDigestHashService(MessageDigest.getInstance(algorithm.getMessageDigestName()),
-                hashStore, properties);
+        HashService hashService = new FilesystemDigestHashService(
+                MessageDigest.getInstance(algorithm.getMessageDigestName()), algorithm, hashStore);
         hashService.getChecksum(box);
 
         Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);

@@ -1,8 +1,8 @@
 package cz.sparko.boxitory.service.filesystem;
 
-import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.service.HashService;
 import cz.sparko.boxitory.service.HashStore;
+import cz.sparko.boxitory.service.noop.NoopHashStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,18 +15,33 @@ import java.security.MessageDigest;
 import java.util.Objects;
 
 public class FilesystemDigestHashService implements HashService {
-
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemDigestHashService.class);
+
+    private static final int DEFAULT_STREAM_BUFFER_LENGTH = 1024;
+
     private final MessageDigest messageDigest;
     private final int streamBufferLength;
     private final HashStore hashStore;
     private final HashAlgorithm hashAlgorithm;
 
-    public FilesystemDigestHashService(MessageDigest messageDigest, HashStore hashStore, AppProperties appProperties) {
-        this.hashAlgorithm = appProperties.getChecksum();
+    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm,
+                                       int streamBufferLength, HashStore hashStore) {
+        this.hashAlgorithm = hashAlgorithm;
         this.messageDigest = messageDigest;
-        streamBufferLength = appProperties.getChecksum_buffer_size();
+        this.streamBufferLength = streamBufferLength;
         this.hashStore = hashStore;
+    }
+
+    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm,
+                                       int streamBufferLength) {
+        this(messageDigest, hashAlgorithm, streamBufferLength, new NoopHashStore());
+    }
+
+    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm) {
+        this(messageDigest, hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, new NoopHashStore());
+    }
+    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm, HashStore hashStore) {
+        this(messageDigest, hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, hashStore);
     }
 
     @Override

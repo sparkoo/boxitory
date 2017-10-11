@@ -19,7 +19,7 @@ public class HashServiceFactory {
             return new NoopHashService();
         } else {
             return new FilesystemDigestHashService(MessageDigest.getInstance(algorithm.getMessageDigestName()),
-                    hashStore, appProperties);
+                    appProperties.getChecksum(), appProperties.getChecksum_buffer_size(), hashStore);
         }
     }
 }
