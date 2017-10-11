@@ -14,6 +14,9 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.Objects;
 
+/**
+ * This implementation of {@link HashService} calculates checksums from files on filesystem using {@link MessageDigest}
+ */
 public class FilesystemDigestHashService implements HashService {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemDigestHashService.class);
 
@@ -24,6 +27,12 @@ public class FilesystemDigestHashService implements HashService {
     private final HashStore hashStore;
     private final HashAlgorithm hashAlgorithm;
 
+    /**
+     * @param messageDigest      instance of {@link MessageDigest} which is used to calculate hashes
+     * @param hashAlgorithm      algorithm used to calculate hashes
+     * @param streamBufferLength buffer used when calculating hashes
+     * @param hashStore          store used to persist already calculated hashes
+     */
     public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm,
                                        int streamBufferLength, HashStore hashStore) {
         this.hashAlgorithm = hashAlgorithm;
@@ -32,14 +41,32 @@ public class FilesystemDigestHashService implements HashService {
         this.hashStore = hashStore;
     }
 
+    /**
+     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(MessageDigest, HashAlgorithm, int, HashStore)}
+     * <p>
+     * Uses {@link NoopHashStore} as store.
+     */
     public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm,
                                        int streamBufferLength) {
         this(messageDigest, hashAlgorithm, streamBufferLength, new NoopHashStore());
     }
 
+    /**
+     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(MessageDigest, HashAlgorithm, int, HashStore)}
+     * <p>
+     * Uses {@link NoopHashStore} as store.
+     * <br>
+     * Uses {@link FilesystemDigestHashService#DEFAULT_STREAM_BUFFER_LENGTH} as {@code streamBufferLength}.
+     */
     public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm) {
         this(messageDigest, hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, new NoopHashStore());
     }
+
+    /**
+     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(MessageDigest, HashAlgorithm, int, HashStore)}
+     * <p>
+     * Uses {@link FilesystemDigestHashService#DEFAULT_STREAM_BUFFER_LENGTH} as {@code streamBufferLength}.
+     */
     public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm, HashStore hashStore) {
         this(messageDigest, hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, hashStore);
     }
