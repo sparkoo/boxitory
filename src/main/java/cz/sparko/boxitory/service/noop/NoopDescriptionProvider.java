@@ -1,4 +1,6 @@
-package cz.sparko.boxitory.service;
+package cz.sparko.boxitory.service.noop;
+
+import cz.sparko.boxitory.service.DescriptionProvider;
 
 import java.util.Optional;
 
