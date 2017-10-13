@@ -1,0 +1,33 @@
+{
+  "properties": [
+    {
+      "name": "box.home",
+      "type": "java.lang.String",
+      "description": "Home of Boxitory repository."
+    },
+    {
+      "name": "box.host_prefix",
+      "type": "java.lang.String",
+      "description": "Prefix for box URL used on HTTP API."
+    },
+    {
+      "name": "box.sort_desc",
+      "type": "java.lang.Boolean",
+      "description": "Box sorting order."
+    },
+    {
+      "name": "box.checksum",
+      "type": "java.lang.String",
+      "description": "Checksum algorithm."
+    },
+    {
+      "name": "box.checksum_persist",
+      "type": "java.lang.Boolean",
+      "description": "Persist already calculated hashes."
+    },
+    {
+      "name": "box.checksum_buffer_size",
+      "type": "java.lang.Integer",
+      "description": "Buffer for hash calculations."
+    }
+  ] }
