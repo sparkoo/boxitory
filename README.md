@@ -8,7 +8,13 @@ For more info how it works, how to configure, ... [See Wiki](https://github.com/
 
 ## Build & run
 
-`./mvnw install && java -jar target/boxitory-{version}.jar`
+```
+$ ./mvnw install && java -jar target/boxitory-{version}.jar
+```
+or
+```
+$ ./mvnw spring-boot:run
+```
 
 By default, http server will start on port *8083*.
 
