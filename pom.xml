@@ -104,6 +104,9 @@
                         <format>html</format>
                         <format>xml</format>
                     </formats>
+                    <instrumentation>
+                        <ignoreTrivial>true</ignoreTrivial>
+                    </instrumentation>
                     <check />
                 </configuration>
             </plugin>
