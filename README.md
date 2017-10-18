@@ -20,7 +20,9 @@ By default, http server will start on port *8083*.
 
 #### Build status (travis-ci)
 
-devel [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=devel)](https://travis-ci.org/sparkoo/boxitory)
+devel [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=devel)](https://travis-ci.org/sparkoo/boxitory) 
+[![codecov](https://codecov.io/gh/sparkoo/boxitory/branch/devel/graph/badge.svg)](https://codecov.io/gh/sparkoo/boxitory)
+
 
 master: [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=master)](https://travis-ci.org/sparkoo/boxitory)
 
