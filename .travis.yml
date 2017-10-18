@@ -3,3 +3,8 @@ jdk:
   - oraclejdk8
 sudo: false
 script: ./mvnw clean verify
+
+script: ./mvnw cobertura:cobertura
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
