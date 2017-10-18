@@ -12,9 +12,12 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
+import static cz.sparko.boxitory.service.HashService.HashAlgorithm.DISABLED;
+
 /**
  * Stores/reads calculated checksums on/from filesystem. Hash file is named
- * {@code {box_filename}.{hash_algorithm_extension}} and has one-line content {@code {calculated_hash}  {box_filename}}.
+ * {@code {box_filename}.{hash_algorithm_extension}} and has one-line content
+ * <pre>{@code {calculated_hash}  {box_filename}}</pre>
  * Checksum files can be created manually, but must have proper format.
  */
 public class FilesystemHashStore implements HashStore {
@@ -27,16 +30,18 @@ public class FilesystemHashStore implements HashStore {
      *
      * @param box       absolute filesystem path to the box
      * @param hash      calculated hash
-     * @param algorithm algorithm of hash
+     * @param algorithm algorithm of hash. Must not be {@link HashAlgorithm#DISABLED}
      * @throws IllegalStateException when file provided by {@code box} does not exists
+     * @throws IllegalStateException when {@code algorithm} is {@link HashAlgorithm#DISABLED}
      */
     @Override
     public void persist(String box, String hash, HashAlgorithm algorithm) {
-        File boxFile = checkBoxFileExists(box);
+        File boxFile = getBoxFile(box);
 
-        if (algorithm == HashAlgorithm.DISABLED) {
-            LOG.debug("Hash algorithm [{}]. Nothing to persist.", algorithm);
-            return;
+        if (algorithm == DISABLED) {
+            LOG.error("No hash algorithm [{}]. Nothing to persist.", algorithm);
+            throw new IllegalStateException("Trying to persist hash with [" + DISABLED + "] algorithm set. " +
+                    "This is not a valid state.");
         }
 
         try {
@@ -49,7 +54,7 @@ public class FilesystemHashStore implements HashStore {
             boolean fileCreated = hashFile.createNewFile();
             if (fileCreated) {
                 try (FileWriter writer = new FileWriter(hashFile)) {
-                    writer.write(createValidChecksumFilecontent(hash, boxFile));
+                    writer.write(ChecksumFileHandler.createValidChecksumFileContent(hash, boxFile));
                     LOG.debug("Storing hash file [{}]", hashFile.getName());
                 }
             } else {
@@ -70,16 +75,16 @@ public class FilesystemHashStore implements HashStore {
      */
     @Override
     public Optional<String> loadHash(String box, HashAlgorithm algorithm) {
-        File boxFile = checkBoxFileExists(box);
+        validateBoxFile(getBoxFile(box));
 
         final Optional<String> hash;
 
         File boxHashFile = new File(box + algorithm.getFileExtension());
         if (boxHashFile.exists() && boxHashFile.isFile()) {
-            LOG.trace("Found hash file [{}] for box [{}]", boxHashFile.getAbsolutePath(), box);
+            LOG.trace("Found hash file [{}] for box version [{}]", boxHashFile.getAbsolutePath(), box);
             try {
-                hash = Optional.of(readHashFromChecksumFile(boxHashFile, boxFile.getName()));
-                LOG.trace("Hash [{}] loaded from file [{}] for box [{}]", hash, boxHashFile.getAbsolutePath(), box);
+                hash = Optional.of(ChecksumFileHandler.readHashFromChecksumFile(boxHashFile));
+                LOG.debug("Hash [{}] loaded from file [{}] for box [{}]", hash, boxHashFile.getAbsolutePath(), box);
             } catch (IllegalStateException ise) {
                 LOG.error("Checksum file [{}] has probably wrong format.", boxHashFile, ise);
                 return Optional.empty();
@@ -94,38 +99,80 @@ public class FilesystemHashStore implements HashStore {
     }
 
     /**
-     * Throw {@link IllegalStateException} when box file does not exists.
+     * Get {@link File} for provided {@code box}
      *
      * @param box path to the box file
+     * @throws IllegalStateException when box file does not exist
      */
-    private File checkBoxFileExists(String box) {
+    private File getBoxFile(String box) {
         File boxFile = new File(box);
-
-        if (!boxFile.exists() || !boxFile.isFile()) {
-            throw new IllegalStateException("box [" + box + "] does not exist!");
-        }
-
+        validateBoxFile(boxFile);
         return boxFile;
     }
 
-    private final String CHECKSUM_FILE_SEPARATOR = "  ";
-
-    private String createValidChecksumFilecontent(String hash, File forFile) {
-        return hash + CHECKSUM_FILE_SEPARATOR + forFile.getName();
+    /**
+     * Throw {@link IllegalStateException} when box file does not exists.
+     *
+     * @param boxFile file to check
+     */
+    private void validateBoxFile(File boxFile) {
+        if (!boxFile.exists() || !boxFile.isFile()) {
+            throw new IllegalStateException("box [" + boxFile.getName() + "] does not exist!");
+        }
     }
 
-    private String readHashFromChecksumFile(File checksumFile, String boxFilename)
-            throws IOException, IllegalStateException {
-        List<String> hashFileLines = Files.readAllLines(checksumFile.toPath());
-        if (hashFileLines.size() != 1) {
-            throw new IllegalStateException("Checksum file has wrong format!");
+    /**
+     * Can parse or create valid checksum file content. Valid format of file is one-line
+     * <code>
+     * <pre>{@code {calculated_hash}  {box_filename}}</pre>
+     * </code>
+     * This class uses {@link ChecksumFileHandler#CHECKSUM_FILE_SEPARATOR} as separator.
+     */
+    private static class ChecksumFileHandler {
+        private final static String CHECKSUM_FILE_SEPARATOR = "  ";
+
+        /**
+         * Creates valid checksum file content from provided {@code hash} and {@link File} {@code forFile}.
+         *
+         * @param hash    calculated hash for file
+         * @param forFile file of calculated hash
+         * @return valid content of the checksum file
+         */
+        static String createValidChecksumFileContent(String hash, File forFile) {
+            return hash + CHECKSUM_FILE_SEPARATOR + forFile.getName();
         }
 
-        String[] hashSplittedLine = hashFileLines.get(0).split(CHECKSUM_FILE_SEPARATOR);
-        if (hashSplittedLine.length != 2 || !hashSplittedLine[1].equals(boxFilename)) {
-            throw new IllegalStateException("Checksum file has wrong format!");
+        /**
+         * Reads hash from given {@link File} {@code checksumFile}
+         *
+         * @param checksumFile read hash from this file. Filename must be in format {original_filename}.{checksum_alg}
+         * @return {@code checksumFile}'s checksum
+         * @throws IOException           when some error when reading the file occurs
+         * @throws IllegalStateException when checksum file has wrong format
+         */
+        static String readHashFromChecksumFile(File checksumFile)
+                throws IOException, IllegalStateException {
+            List<String> hashFileLines = Files.readAllLines(checksumFile.toPath());
+            if (hashFileLines.size() != 1) {
+                throw new IllegalStateException("Checksum file has wrong format!");
+            }
+
+            String boxFilename = parseOriginalFilenameFromChecksumFile(checksumFile);
+            String[] hashSplittedLine = hashFileLines.get(0).split(CHECKSUM_FILE_SEPARATOR);
+            if (hashSplittedLine.length != 2 || !hashSplittedLine[1].equals(boxFilename)) {
+                throw new IllegalStateException("Checksum file has wrong format!");
+            }
+
+            return hashSplittedLine[0];
         }
 
-        return hashSplittedLine[0];
+        private static String parseOriginalFilenameFromChecksumFile(File checksumFile) throws IllegalStateException {
+            String checksumFilename = checksumFile.getName();
+            int lastDotIndex = checksumFilename.lastIndexOf('.');
+            if (lastDotIndex < 0) {
+                throw new IllegalStateException("Checksum file has wrong name! [" + checksumFilename + "]");
+            }
+            return checksumFilename.substring(0, lastDotIndex);
+        }
     }
 }

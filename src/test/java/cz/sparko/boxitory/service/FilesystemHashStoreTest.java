@@ -107,14 +107,11 @@ public class FilesystemHashStoreTest {
         assertTrue(expectedFileLines.get(0).equals(testHashValue));
     }
 
-    @Test
-    public void givenExistingBoxAndDisabledAlg_whenPersist_thenNoFileStored() {
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void givenExistingBoxAndDisabledAlg_whenPersist_thenThrowISE() {
         final String testHashValue = "blabol";
 
         this.hashStore.persist(validBoxAbsPath, testHashValue, DISABLED);
-
-        File expectedFile = new File(validBoxAbsPath + DISABLED.getFileExtension());
-        assertFalse(expectedFile.exists());
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
