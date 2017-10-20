@@ -1,9 +1,12 @@
-package cz.sparko.boxitory.service;
+package cz.sparko.boxitory.service.filesystem;
 
 import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
+import cz.sparko.boxitory.service.BoxRepository;
+import cz.sparko.boxitory.service.DescriptionProvider;
+import cz.sparko.boxitory.service.HashService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,7 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
+import cz.sparko.boxitory.service.filesystem.FilesystemDescriptionProvider;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -11,7 +12,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static cz.sparko.boxitory.service.FilesystemDescriptionProvider.DESCRIPTIONS_FILE;
+import static cz.sparko.boxitory.service.filesystem.FilesystemDescriptionProvider.DESCRIPTIONS_FILE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.testng.Assert.assertEquals;
