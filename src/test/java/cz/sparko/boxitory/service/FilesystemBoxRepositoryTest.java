@@ -1,10 +1,12 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
-import cz.sparko.boxitory.conf.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxVersion;
 import cz.sparko.boxitory.domain.BoxProvider;
+import cz.sparko.boxitory.service.filesystem.FilesystemBoxRepository;
+import cz.sparko.boxitory.service.noop.NoopDescriptionProvider;
+import cz.sparko.boxitory.service.noop.NoopHashService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.AfterClass;

@@ -1,5 +1,6 @@
-package cz.sparko.boxitory.service;
+package cz.sparko.boxitory.service.filesystem;
 
+import cz.sparko.boxitory.service.DescriptionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
 
         File descriptionFile = new File(boxHome, File.separator + boxName + File.separator + DESCRIPTIONS_FILE);
         if (!descriptionFile.exists()) {
-            LOG.debug("Descriptions file [{}] does not exist.", DESCRIPTIONS_FILE);
+            LOG.trace("Descriptions file [{}] does not exist.", DESCRIPTIONS_FILE);
             return Optional.empty();
         }
         try {
