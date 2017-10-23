@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(secure = false)
 @TestPropertySource(locations = "classpath:test.properties")
 public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContextTests {
+    public static final String UTF8_CHARSET = ";charset=UTF-8";
+
     @Autowired
     MockMvc mockMvc;
 
