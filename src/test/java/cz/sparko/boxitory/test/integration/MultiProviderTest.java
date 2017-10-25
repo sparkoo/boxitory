@@ -60,12 +60,12 @@ public class MultiProviderTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.versions", hasSize(2)))
                 .andExpect(jsonPath("$.versions[0].version", is("2")))
                 .andExpect(jsonPath("$.versions[0].providers", hasSize(2)))
-                .andExpect(jsonPath("$.versions[0].providers[0].name", is("libvirt")))
-                .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(VM_2_LVIRT)))
-                .andExpect(jsonPath("$.versions[0].providers[1].name", is("virtualbox")))
-                .andExpect(jsonPath("$.versions[0].providers[1].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[0].providers[1].url", containsString(VM_2_VBOX)))
+                .andExpect(jsonPath("$.versions[0].providers[?(@.name == \'libvirt\' && " +
+                                            "@.url =~ /.*" + appProperties.getHost_prefix() + ".*/i && " +
+                                            "@.url =~ /.*" + VM_2_LVIRT + ".*/i)]").exists())
+                .andExpect(jsonPath("$.versions[0].providers[?(@.name == \'virtualbox\' && " +
+                                            "@.url =~ /.*" + appProperties.getHost_prefix() + ".*/i && " +
+                                            "@.url =~ /.*" + VM_2_VBOX + ".*/i)]").exists())
                 .andExpect(jsonPath("$.versions[1].version", is("1")))
                 .andExpect(jsonPath("$.versions[1].providers", hasSize(1)))
                 .andExpect(jsonPath("$.versions[1].providers[0].name", is("virtualbox")))
