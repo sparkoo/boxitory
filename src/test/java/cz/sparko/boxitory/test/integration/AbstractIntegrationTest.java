@@ -14,7 +14,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,12 +34,12 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
     @Autowired
     MockMvc mockMvc;
 
-    @BeforeClass
+    @BeforeMethod
     public void setUp() throws IOException {
         createFolderStructure();
     }
 
-    @AfterClass
+    @AfterMethod
     public void tearDown() throws IOException {
         destroyFolderStructure();
     }
