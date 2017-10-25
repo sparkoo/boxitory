@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TestPropertySource(properties = {
         "box.sort_desc=true",
-        "box.host_prefix=test_prefix"
 })
 public class MultiProviderTest extends AbstractIntegrationTest {
 
