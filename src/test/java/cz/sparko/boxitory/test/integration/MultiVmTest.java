@@ -30,17 +30,18 @@ public class MultiVmTest extends AbstractIntegrationTest {
     @Test
     public void givenMultiProviders_whenIndex_thenReturnListWithVm() throws Exception {
         mockMvc.perform(get("/"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TEXT_HTML + UTF8_CHARSET))
                 .andExpect(view().name("index"))
-                .andExpect(content().string(containsString("vm")))
-                .andDo(print());
+                .andExpect(content().string(containsString("vm")));
     }
 
     @Test
     public void givenMultiProviders_whenVm1Box_thenReturnListOfVmVersions() throws Exception {
         final String VM = "vm1";
         mockMvc.perform(get("/" + VM))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.name", is(VM)))
@@ -52,14 +53,14 @@ public class MultiVmTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.versions[1].version", is("1")))
                 .andExpect(jsonPath("$.versions[1].providers[0].name", is("virtualbox")))
                 .andExpect(jsonPath("$.versions[1].providers[0].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[1].providers[0].url", containsString(VM + "_1_virtualbox.box")))
-                .andDo(print());
+                .andExpect(jsonPath("$.versions[1].providers[0].url", containsString(VM + "_1_virtualbox.box")));
     }
 
     @Test
     public void givenMultiProviders_whenVm2Box_thenReturnListOfVmVersions() throws Exception {
         final String VM = "vm2";
         mockMvc.perform(get("/" + VM))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.name", is(VM)))
@@ -67,25 +68,24 @@ public class MultiVmTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.versions[0].version", is("17")))
                 .andExpect(jsonPath("$.versions[0].providers[0].name", is("virtualbox")))
                 .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(VM + "_17_virtualbox.box")))
-                .andDo(print());
+                .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(VM + "_17_virtualbox.box")));
     }
 
     @Test
     public void givenMultiProviders_whenLatestVersionVm1_thenReturnLatestVersionNumber() throws Exception {
         mockMvc.perform(get("/vm1/latestVersion"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TEXT_PLAIN + UTF8_CHARSET))
-                .andExpect(content().string("2"))
-                .andDo(print());
+                .andExpect(content().string("2"));
     }
 
     @Test
     public void givenMultiProviders_whenLatestVersionVm2_thenReturnLatestVersionNumber() throws Exception {
         mockMvc.perform(get("/vm2/latestVersion"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TEXT_PLAIN + UTF8_CHARSET))
-                .andExpect(content().string("17"))
-                .andDo(print());
+                .andExpect(content().string("17"));
     }
 }

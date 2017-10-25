@@ -13,21 +13,21 @@ public class WrongRepositoryDirTest extends AbstractIntegrationTest {
     @Test
     public void givenWrongRepoDir_whenRequestRoot_then500() throws Exception {
         mockMvc.perform(get("/"))
-                .andExpect(status().is5xxServerError())
-                .andDo(print());
+                .andDo(print())
+                .andExpect(status().is5xxServerError());
     }
 
     @Test
     public void givenWrongRepoDir_whenRequestBox_then500() throws Exception {
         mockMvc.perform(get("/box"))
-                .andExpect(status().is5xxServerError())
-                .andDo(print());
+                .andDo(print())
+                .andExpect(status().is5xxServerError());
     }
 
     @Test
     public void givenWrongRepoDir_whenRequestBoxLatestVersion_then500() throws Exception {
         mockMvc.perform(get("/box"))
-                .andExpect(status().is5xxServerError())
-                .andDo(print());
+                .andDo(print())
+                .andExpect(status().is5xxServerError());
     }
 }

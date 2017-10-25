@@ -30,16 +30,17 @@ public class MultiProviderTest extends AbstractIntegrationTest {
     @Test
     public void givenMultiProviders_whenIndex_thenReturnListWithVm() throws Exception {
         mockMvc.perform(get("/"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TEXT_HTML + UTF8_CHARSET))
                 .andExpect(view().name("index"))
-                .andExpect(content().string(containsString("vm")))
-                .andDo(print());
+                .andExpect(content().string(containsString("vm")));
     }
 
     @Test
     public void givenMultiProviders_whenBox_thenReturnListOfVmVersions() throws Exception {
         mockMvc.perform(get("/vm"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.name", is("vm")))
@@ -54,16 +55,15 @@ public class MultiProviderTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.versions[1].version", is("1")))
                 .andExpect(jsonPath("$.versions[1].providers[0].name", is("virtualbox")))
                 .andExpect(jsonPath("$.versions[1].providers[0].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[1].providers[0].url", containsString("vm_1_virtualbox.box")))
-                .andDo(print());
+                .andExpect(jsonPath("$.versions[1].providers[0].url", containsString("vm_1_virtualbox.box")));
     }
 
     @Test
     public void givenMultiProviders_whenLatestVersion_thenReturnLatestVersionNumber() throws Exception {
         mockMvc.perform(get("/vm/latestVersion"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TEXT_PLAIN + UTF8_CHARSET))
-                .andExpect(content().string("2"))
-                .andDo(print());
+                .andExpect(content().string("2"));
     }
 }
