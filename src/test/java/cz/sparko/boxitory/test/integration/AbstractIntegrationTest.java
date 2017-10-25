@@ -3,8 +3,7 @@ package cz.sparko.boxitory.test.integration;
 import cz.sparko.boxitory.App;
 import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.controller.BoxController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,6 +13,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+
+import java.io.File;
+import java.io.IOException;
 
 @ContextConfiguration(classes = App.class)
 @WebMvcTest(controllers = BoxController.class)
@@ -23,7 +27,32 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
     public static final String UTF8_CHARSET = ";charset=UTF-8";
 
     @Autowired
+    AppProperties appProperties;
+
+    @Autowired
     MockMvc mockMvc;
+
+    @BeforeClass
+    public void setUp() throws IOException {
+        createFolderStructure();
+    }
+
+    @AfterClass
+    public void tearDown() throws IOException {
+        destroyFolderStructure();
+    }
+
+    void createRepositoryDir() {
+        new File(appProperties.getHome()).mkdir();
+    }
+
+    void createFolderStructure() throws IOException {
+        createRepositoryDir();
+    }
+
+    void destroyFolderStructure() throws IOException {
+        FileUtils.deleteDirectory(new File(appProperties.getHome()));
+    }
 
     @Configuration
     static class TestConfig {
@@ -31,5 +60,17 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
         public AppProperties appProperties() {
             return new AppProperties();
         }
+    }
+
+    File createDirInRepository(String vmName) {
+        File vmDir = new File(appProperties.getHome() + File.separator + vmName);
+        vmDir.mkdir();
+        return vmDir;
+    }
+
+    File createFile(String filePath) throws IOException {
+        File testFile = new File(filePath);
+        testFile.createNewFile();
+        return testFile;
     }
 }

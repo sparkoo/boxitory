@@ -10,6 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {"box.home=this/is/not/valid/repository/dir"})
 public class WrongRepositoryDirTest extends AbstractIntegrationTest {
 
+    @Override
+    void createFolderStructure() { }
+
     @Test
     public void givenWrongRepoDir_whenRequestRoot_then500() throws Exception {
         mockMvc.perform(get("/"))

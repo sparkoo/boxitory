@@ -1,11 +1,13 @@
 package cz.sparko.boxitory.test.integration;
 
-import cz.sparko.boxitory.conf.AppProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.io.IOException;
+
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.TEXT_HTML;
@@ -18,14 +20,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @TestPropertySource(properties = {
-        "box.home=target/test-classes/test_repository/multiprovider",
         "box.sort_desc=true",
         "box.host_prefix=test_prefix"
 })
 public class MultiProviderTest extends AbstractIntegrationTest {
 
-    @Autowired
-    AppProperties appProperties;
+    private final String VM = "vm";
+    private final String VM_1_VBOX = VM + "_1_virtualbox.box";
+    private final String VM_2_VBOX = VM + "_2_virtualbox.box";
+    private final String VM_2_LVIRT = VM + "_2_libvirt.box";
+
+    @Override
+    void createFolderStructure() throws IOException {
+        createRepositoryDir();
+        File vmDir = createDirInRepository(VM);
+        createFile(vmDir.getPath() + File.separator + VM_1_VBOX);
+        createFile(vmDir.getPath() + File.separator + VM_2_VBOX);
+        createFile(vmDir.getPath() + File.separator + VM_2_LVIRT);
+    }
 
     @Test
     public void givenMultiProviders_whenIndex_thenReturnListWithVm() throws Exception {
@@ -34,7 +46,7 @@ public class MultiProviderTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TEXT_HTML + UTF8_CHARSET))
                 .andExpect(view().name("index"))
-                .andExpect(content().string(containsString("vm")));
+                .andExpect(content().string(containsString(VM)));
     }
 
     @Test
@@ -43,19 +55,22 @@ public class MultiProviderTest extends AbstractIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.name", is("vm")))
-                .andExpect(jsonPath("$.description", is("vm")))
+                .andExpect(jsonPath("$.name", is(VM)))
+                .andExpect(jsonPath("$.description", is(VM)))
+                .andExpect(jsonPath("$.versions", hasSize(2)))
                 .andExpect(jsonPath("$.versions[0].version", is("2")))
+                .andExpect(jsonPath("$.versions[0].providers", hasSize(2)))
                 .andExpect(jsonPath("$.versions[0].providers[0].name", is("libvirt")))
                 .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[0].providers[0].url", containsString("vm_2_libvirt.box")))
+                .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(VM_2_LVIRT)))
                 .andExpect(jsonPath("$.versions[0].providers[1].name", is("virtualbox")))
                 .andExpect(jsonPath("$.versions[0].providers[1].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[0].providers[1].url", containsString("vm_2_virtualbox.box")))
+                .andExpect(jsonPath("$.versions[0].providers[1].url", containsString(VM_2_VBOX)))
                 .andExpect(jsonPath("$.versions[1].version", is("1")))
+                .andExpect(jsonPath("$.versions[1].providers", hasSize(1)))
                 .andExpect(jsonPath("$.versions[1].providers[0].name", is("virtualbox")))
                 .andExpect(jsonPath("$.versions[1].providers[0].url", containsString(appProperties.getHost_prefix())))
-                .andExpect(jsonPath("$.versions[1].providers[0].url", containsString("vm_1_virtualbox.box")));
+                .andExpect(jsonPath("$.versions[1].providers[0].url", containsString(VM_1_VBOX)));
     }
 
     @Test
