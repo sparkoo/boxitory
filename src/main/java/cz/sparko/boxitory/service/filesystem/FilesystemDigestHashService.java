@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Objects;
 
@@ -86,20 +87,16 @@ public class FilesystemDigestHashService implements HashService {
 
     private String calculateHash(String box) {
         LOG.debug("calculating [{}] hash for box [{}]", hashAlgorithm.name(), box);
-        try (InputStream boxDataStream = Files.newInputStream(new File(box).toPath())) {
+        try (InputStream boxDataStream = Files.newInputStream(new File(box).toPath());
+             InputStream digestInputStream = new DigestInputStream(boxDataStream, messageDigest)) {
             LOG.trace("buffering box data (buffer size [{}]b) ...", streamBufferLength);
             final byte[] buffer = new byte[streamBufferLength];
-            int read = boxDataStream.read(buffer, 0, streamBufferLength);
-
-            while (read > -1) {
-                messageDigest.update(buffer, 0, read);
-                read = boxDataStream.read(buffer, 0, streamBufferLength);
-            }
+            //noinspection StatementWithEmptyBody
+            while (digestInputStream.read(buffer) > 0) ;
         } catch (IOException e) {
             LOG.error("Error during processing file [{}], message: [{}]", box, e.getMessage());
             throw new RuntimeException(
-                    "Error while getting checksum for file " + box + " reason: " + e.getMessage(), e
-            );
+                    "Error while getting checksum for file " + box + " reason: " + e.getMessage(), e);
         }
 
         return getHash(messageDigest.digest());
