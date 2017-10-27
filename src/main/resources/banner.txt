@@ -1,3 +1,4 @@
+
  _               _ _
 | |             (_) |         ${AnsiColor.YELLOW}${application.formatted-version}${AnsiStyle.NORMAL}
 | |__   _____  ___| |_ ___  _ __ _   _
