@@ -1,4 +1,4 @@
-package cz.sparko.boxitory.test.integration.hashtype;
+package cz.sparko.boxitory.test.e2e.hashtype;
 
 import org.springframework.test.context.TestPropertySource;
 

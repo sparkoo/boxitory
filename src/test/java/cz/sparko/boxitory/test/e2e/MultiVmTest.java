@@ -1,4 +1,4 @@
-package cz.sparko.boxitory.test.integration;
+package cz.sparko.boxitory.test.e2e;
 
 import cz.sparko.boxitory.conf.AppProperties;
 import org.springframework.beans.factory.annotation.Autowired;

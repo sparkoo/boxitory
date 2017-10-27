@@ -1,4 +1,4 @@
-package cz.sparko.boxitory.test.integration.latestversion;
+package cz.sparko.boxitory.test.e2e.latestversion;
 
 import org.springframework.test.context.TestPropertySource;
 

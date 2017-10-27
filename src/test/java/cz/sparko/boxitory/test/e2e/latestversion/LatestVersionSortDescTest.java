@@ -1,7 +1,7 @@
-package cz.sparko.boxitory.test.integration.latestversion;
+package cz.sparko.boxitory.test.e2e.latestversion;
 
 
-import cz.sparko.boxitory.test.integration.AbstractIntegrationTest;
+import cz.sparko.boxitory.test.e2e.AbstractIntegrationTest;
 import org.springframework.test.context.TestPropertySource;
 import org.testng.annotations.Test;
 

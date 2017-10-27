@@ -1,4 +1,4 @@
-package cz.sparko.boxitory.test.integration;
+package cz.sparko.boxitory.test.e2e;
 
 import org.testng.annotations.Test;
 

@@ -1,4 +1,4 @@
-package cz.sparko.boxitory.test.integration;
+package cz.sparko.boxitory.test.e2e;
 
 import cz.sparko.boxitory.App;
 import cz.sparko.boxitory.conf.AppProperties;
@@ -15,6 +15,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.io.IOException;
 @WebMvcTest(controllers = BoxController.class)
 @AutoConfigureMockMvc(secure = false)
 @TestPropertySource(locations = "classpath:test.properties")
+@Test(groups = "e2e")
 public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContextTests {
     public static final String UTF8_CHARSET = ";charset=UTF-8";
 

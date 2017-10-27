@@ -1,6 +1,6 @@
-package cz.sparko.boxitory.test.integration.versionsort;
+package cz.sparko.boxitory.test.e2e.versionsort;
 
-import cz.sparko.boxitory.test.integration.AbstractIntegrationTest;
+import cz.sparko.boxitory.test.e2e.AbstractIntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
