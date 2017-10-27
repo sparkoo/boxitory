@@ -1,7 +1,10 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.conf.AppProperties;
+import cz.sparko.boxitory.service.HashService.HashAlgorithm;
+import cz.sparko.boxitory.service.filesystem.FilesystemDigestHashService;
 import org.apache.commons.io.FileUtils;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -13,7 +16,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
+import static cz.sparko.boxitory.service.HashService.HashAlgorithm.MD5;
 import static org.testng.Assert.assertEquals;
 
 @SpringBootTest
@@ -55,17 +60,17 @@ public class FilesystemDigestHashServiceTest {
     public Object[][] filesAndHashes() {
         return new Object[][]{
                 {
-                        "MD5",
+                        HashAlgorithm.MD5,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "86462c346f1358ddbf4f137fb5da43cf"
                 },
                 {
-                        "SHA-1",
+                        HashAlgorithm.SHA1,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "6efeafd3d3304cf5d7fd37db2a7ddbaac09f425d"
                 },
                 {
-                        "SHA-256",
+                        HashAlgorithm.SHA256,
                         new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box"),
                         "ae4fe7f29f683d3901d4c620ef2e3c7ed17ebb6813158efd6a16f81b71a0aa43"
                 }
@@ -73,13 +78,34 @@ public class FilesystemDigestHashServiceTest {
     }
 
     @Test(dataProvider = "filesAndHashes")
-    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(String algorithm, File file, String
-            expectedChecksum) throws NoSuchAlgorithmException {
-        HashService hashService = new FilesystemDigestHashService(MessageDigest.getInstance(algorithm), new AppProperties());
+    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(
+            HashAlgorithm algorithm, File file, String expectedChecksum) throws NoSuchAlgorithmException {
+        HashService hashService = new FilesystemDigestHashService(
+                MessageDigest.getInstance(algorithm.getMessageDigestName()), algorithm, 1024);
 
         String checksum = hashService.getChecksum(file.getAbsolutePath());
 
         assertEquals(checksum, expectedChecksum);
     }
 
+    @Test
+    public void givenHashService_whenLoadHashReturnsHash_thenHashStoreLoadAndPersistAreCalled()
+            throws NoSuchAlgorithmException {
+        final String box = "box";
+        final String hash = "hash";
+        final HashAlgorithm algorithm = MD5;
+
+        AppProperties properties = new AppProperties();
+        properties.setChecksum(algorithm);
+
+        HashStore hashStore = Mockito.mock(HashStore.class);
+        Mockito.when(hashStore.loadHash(box, algorithm)).thenReturn(Optional.of(hash));
+
+        HashService hashService = new FilesystemDigestHashService(
+                MessageDigest.getInstance(algorithm.getMessageDigestName()), algorithm, hashStore);
+        hashService.getChecksum(box);
+
+        Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
+        Mockito.verify(hashStore, Mockito.times(1)).persist(box, hash, algorithm);
+    }
 }

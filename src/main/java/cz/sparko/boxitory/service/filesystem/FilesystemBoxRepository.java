@@ -1,21 +1,26 @@
-package cz.sparko.boxitory.service;
+package cz.sparko.boxitory.service.filesystem;
 
 import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
+import cz.sparko.boxitory.service.BoxRepository;
+import cz.sparko.boxitory.service.DescriptionProvider;
+import cz.sparko.boxitory.service.HashService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static cz.sparko.boxitory.domain.BoxVersion.VERSION_COMPARATOR;
 
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
@@ -25,17 +30,22 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final HashService hashService;
     private final boolean sortDesc;
 
-    public FilesystemBoxRepository(AppProperties appProperties, HashService hashService) {
+    private final DescriptionProvider descriptionProvider;
+
+    public FilesystemBoxRepository(AppProperties appProperties,
+                                   HashService hashService,
+                                   DescriptionProvider descriptionProvider) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();
         this.hashService = hashService;
+        this.descriptionProvider = descriptionProvider;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
     @Override
     public List<String> getBoxes() {
-        return Arrays.stream(boxHome.listFiles(File::isDirectory))
+        return listPotencialBoxDirs()
                 .filter(this::containsValidBoxFile)
                 .map(File::getName)
                 .sorted()
@@ -48,7 +58,7 @@ public class FilesystemBoxRepository implements BoxRepository {
         getBoxDir(boxName)
                 .ifPresent(d -> groupedBoxFiles.putAll(groupBoxFilesByVersion(d)));
 
-        List<BoxVersion> boxVersions = createBoxVersionsFromGroupedFiles(groupedBoxFiles);
+        List<BoxVersion> boxVersions = createBoxVersionsFromGroupedFiles(groupedBoxFiles, boxName);
         if (boxVersions.isEmpty()) {
             LOG.debug("no box versions found for [{}]", boxName);
             return Optional.empty();
@@ -59,14 +69,17 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private Optional<File> getBoxDir(String boxName) {
-        File[] boxesHomeFiles = boxHome.listFiles();
-        if (boxesHomeFiles == null) {
-            throw new IllegalStateException("[" + boxHome.getAbsolutePath() + "] is not a valid folder");
-        }
-        return Arrays.stream(boxesHomeFiles)
+        return listPotencialBoxDirs()
                 .filter(File::isDirectory)
                 .filter(f -> f.getName().equals(boxName))
                 .findFirst();
+    }
+
+    private Stream<File> listPotencialBoxDirs() {
+        File[] potencialBoxDirs = Optional.ofNullable(boxHome.listFiles(File::isDirectory))
+                .orElseThrow(() -> new IllegalStateException(
+                        "Repository directory [" + boxHome.getAbsolutePath() + "] is not a valid directory."));
+        return Arrays.stream(potencialBoxDirs);
     }
 
     private Map<String, List<File>> groupBoxFilesByVersion(File boxDir) {
@@ -98,23 +111,23 @@ public class FilesystemBoxRepository implements BoxRepository {
         return parsedFilename.get(1);
     }
 
-    private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles) {
+    private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles, String boxName) {
         List<BoxVersion> boxVersions = new ArrayList<>();
         groupedFiles.forEach(
-                (key, value) -> boxVersions.add(createBoxVersion(key, value))
+                (key, value) -> boxVersions.add(createBoxVersion(key, value, boxName))
         );
-        Comparator<BoxVersion> versionComparator = Comparator.comparingInt(o -> Integer.parseInt(o.getVersion()));
         if (sortDesc) {
-            boxVersions.sort(versionComparator.reversed());
+            boxVersions.sort(VERSION_COMPARATOR.reversed());
         } else {
-            boxVersions.sort(versionComparator);
+            boxVersions.sort(VERSION_COMPARATOR);
         }
         return boxVersions;
     }
 
-    private BoxVersion createBoxVersion(String version, List<File> fileList) {
+    private BoxVersion createBoxVersion(String version, List<File> fileList, String boxName) {
         return new BoxVersion(
                 version,
+                descriptionProvider.getDescription(boxName, version).orElse(null),
                 fileList.stream().map(this::createBoxProviderFromFile).collect(Collectors.toList())
         );
     }
@@ -137,6 +150,6 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private boolean containsValidBoxFile(File file) {
         File[] files = file.listFiles(this::validateFilename);
-        return files.length > 0;
+        return files != null && files.length > 0;
     }
 }

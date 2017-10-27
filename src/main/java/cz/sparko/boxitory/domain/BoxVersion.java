@@ -1,14 +1,23 @@
 package cz.sparko.boxitory.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BoxVersion {
+    public static final Comparator<BoxVersion> VERSION_COMPARATOR =
+            Comparator.comparingInt(o -> Integer.parseInt(o.getVersion()));
+
     private final String version;
+    private final String description;
     private final List<BoxProvider> providers;
 
-    public BoxVersion(String version, List<BoxProvider> providers) {
+    public BoxVersion(String version, String description, List<BoxProvider> providers) {
         this.version = version;
+        this.description = description;
         this.providers = providers;
     }
 
@@ -16,6 +25,7 @@ public class BoxVersion {
     public String toString() {
         return "BoxVersion{" +
                 "version='" + version + '\'' +
+                ", description='" + description + '\'' +
                 ", providers=" + providers +
                 '}';
     }
@@ -24,14 +34,15 @@ public class BoxVersion {
     public boolean equals(Object o) {
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
-        BoxVersion thatVersion = (BoxVersion) o;
-        return Objects.equals(this.version, thatVersion.version) &&
-                providers.containsAll(thatVersion.getProviders()) && thatVersion.getProviders().containsAll(providers);
+        BoxVersion that = (BoxVersion) o;
+        return Objects.equals(version, that.version) &&
+                Objects.equals(description, that.description) &&
+                providers.containsAll(that.getProviders()) && that.getProviders().containsAll(providers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(version, providers);
+        return Objects.hash(version, description, providers);
     }
 
     public String getVersion() {
@@ -40,5 +51,9 @@ public class BoxVersion {
 
     public List<BoxProvider> getProviders() {
         return providers;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

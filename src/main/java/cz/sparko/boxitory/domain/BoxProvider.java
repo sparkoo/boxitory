@@ -1,6 +1,8 @@
 package cz.sparko.boxitory.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.Objects;
 
@@ -8,6 +10,7 @@ import java.util.Objects;
 public class BoxProvider {
     private final String url;
     private final String name;
+    @JsonProperty("checksum_type")
     private final String checksumType;
     private final String checksum;
 
