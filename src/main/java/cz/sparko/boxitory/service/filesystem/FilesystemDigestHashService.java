@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.util.Objects;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * This implementation of {@link HashService} calculates checksums from files on filesystem using {@link MessageDigest}
@@ -23,53 +23,48 @@ public class FilesystemDigestHashService implements HashService {
 
     private static final int DEFAULT_STREAM_BUFFER_LENGTH = 1024;
 
-    private final MessageDigest messageDigest;
     private final int streamBufferLength;
     private final HashStore hashStore;
     private final HashAlgorithm hashAlgorithm;
 
     /**
-     * @param messageDigest      instance of {@link MessageDigest} which is used to calculate hashes
      * @param hashAlgorithm      algorithm used to calculate hashes
      * @param streamBufferLength buffer used when calculating hashes
      * @param hashStore          store used to persist already calculated hashes
      */
-    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm,
-                                       int streamBufferLength, HashStore hashStore) {
+    public FilesystemDigestHashService(HashAlgorithm hashAlgorithm, int streamBufferLength, HashStore hashStore) {
         this.hashAlgorithm = hashAlgorithm;
-        this.messageDigest = messageDigest;
         this.streamBufferLength = streamBufferLength;
         this.hashStore = hashStore;
     }
 
     /**
-     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(MessageDigest, HashAlgorithm, int, HashStore)}
+     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(HashAlgorithm, int, HashStore)}
      * <p>
      * Uses {@link NoopHashStore} as store.
      */
-    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm,
-                                       int streamBufferLength) {
-        this(messageDigest, hashAlgorithm, streamBufferLength, new NoopHashStore());
+    public FilesystemDigestHashService(HashAlgorithm hashAlgorithm, int streamBufferLength) {
+        this(hashAlgorithm, streamBufferLength, new NoopHashStore());
     }
 
     /**
-     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(MessageDigest, HashAlgorithm, int, HashStore)}
+     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(HashAlgorithm, int, HashStore)}
      * <p>
      * Uses {@link NoopHashStore} as store.
      * <br>
      * Uses {@link FilesystemDigestHashService#DEFAULT_STREAM_BUFFER_LENGTH} as {@code streamBufferLength}.
      */
-    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm) {
-        this(messageDigest, hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, new NoopHashStore());
+    public FilesystemDigestHashService(HashAlgorithm hashAlgorithm) {
+        this(hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, new NoopHashStore());
     }
 
     /**
-     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(MessageDigest, HashAlgorithm, int, HashStore)}
+     * See {@link FilesystemDigestHashService#FilesystemDigestHashService(HashAlgorithm, int, HashStore)}
      * <p>
      * Uses {@link FilesystemDigestHashService#DEFAULT_STREAM_BUFFER_LENGTH} as {@code streamBufferLength}.
      */
-    public FilesystemDigestHashService(MessageDigest messageDigest, HashAlgorithm hashAlgorithm, HashStore hashStore) {
-        this(messageDigest, hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, hashStore);
+    public FilesystemDigestHashService(HashAlgorithm hashAlgorithm, HashStore hashStore) {
+        this(hashAlgorithm, DEFAULT_STREAM_BUFFER_LENGTH, hashStore);
     }
 
     @Override
@@ -86,20 +81,25 @@ public class FilesystemDigestHashService implements HashService {
     }
 
     private String calculateHash(String box) {
-        LOG.debug("calculating [{}] hash for box [{}]", hashAlgorithm.name(), box);
-        try (InputStream boxDataStream = Files.newInputStream(new File(box).toPath());
-             InputStream digestInputStream = new DigestInputStream(boxDataStream, messageDigest)) {
-            LOG.trace("buffering box data (buffer size [{}]b) ...", streamBufferLength);
-            final byte[] buffer = new byte[streamBufferLength];
-            //noinspection StatementWithEmptyBody
-            while (digestInputStream.read(buffer) > 0) ;
-        } catch (IOException e) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm.getMessageDigestName());
+            LOG.debug("calculating [{}] hash for box [{}]", hashAlgorithm.name(), box);
+            try (InputStream boxDataStream = Files.newInputStream(new File(box).toPath());
+                 InputStream digestInputStream = new DigestInputStream(boxDataStream, messageDigest)) {
+                LOG.trace("buffering box data (buffer size [{}]b) ...", streamBufferLength);
+                final byte[] buffer = new byte[streamBufferLength];
+                //noinspection StatementWithEmptyBody
+                while (digestInputStream.read(buffer) > 0) ;
+
+                return getHash(messageDigest.digest());
+            }
+        } catch (IOException | NoSuchAlgorithmException e) {
             LOG.error("Error during processing file [{}], message: [{}]", box, e.getMessage());
             throw new RuntimeException(
                     "Error while getting checksum for file " + box + " reason: " + e.getMessage(), e);
         }
 
-        return getHash(messageDigest.digest());
+
     }
 
     private String getHash(byte[] digestBytes) {
@@ -109,20 +109,9 @@ public class FilesystemDigestHashService implements HashService {
     @Override
     public String toString() {
         return "FilesystemDigestHashService{" +
-                "messageDigest=" + messageDigest +
+                "streamBufferLength=" + streamBufferLength +
+                ", hashStore=" + hashStore +
+                ", hashAlgorithm=" + hashAlgorithm +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-        FilesystemDigestHashService that = (FilesystemDigestHashService) o;
-        return messageDigest.getAlgorithm().equals(that.messageDigest.getAlgorithm());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(messageDigest);
     }
 }
