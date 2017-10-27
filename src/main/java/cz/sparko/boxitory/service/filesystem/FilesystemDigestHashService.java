@@ -74,7 +74,7 @@ public class FilesystemDigestHashService implements HashService {
 
     @Override
     public String getHashType() {
-        return messageDigest.getAlgorithm().replaceAll("-", "").toLowerCase();
+        return hashAlgorithm.getVagrantInterfaceName();
     }
 
     @Override
