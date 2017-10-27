@@ -6,6 +6,7 @@ import cz.sparko.boxitory.domain.BoxVersion;
 import cz.sparko.boxitory.service.BoxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,9 +51,13 @@ public class BoxController {
     }
 
     @ExceptionHandler
-    @ResponseBody
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleException(Exception e) {
-        return e.getMessage();
+    public ResponseEntity<String> handleException(Exception e) {
+        final HttpStatus status;
+        if (e instanceof NotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(e.getMessage(), status);
     }
 }

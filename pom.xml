@@ -9,7 +9,24 @@
     <packaging>jar</packaging>
 
     <name>boxitory</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Vagrant box repository</description>
+    <url>https://github.com/sparkoo/boxitory</url>
+    <developers>
+        <developer>
+            <name>sparkoo</name>
+            <url>https://github.com/sparkoo</url>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>D3ryk</name>
+            <url>https://github.com/D3ryk</url>
+        </contributor>
+    </contributors>
+    <organization>
+        <name>sparkoo</name>
+        <url>https://github.com/sparkoo</url>
+    </organization>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -107,11 +124,36 @@
                     <instrumentation>
                         <ignoreTrivial>true</ignoreTrivial>
                     </instrumentation>
-                    <check />
+                    <check/>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20</version>
+                <configuration>
+                    <excludedGroups>e2e</excludedGroups>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <groups>e2e</groups>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
-
 </project>
