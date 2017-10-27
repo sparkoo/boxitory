@@ -17,9 +17,4 @@ public class NoopHashStore implements HashStore {
     public Optional<String> loadHash(String box, HashAlgorithm algorithm) {
         return Optional.empty();
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj.getClass().getName().equals(NoopHashStore.class.getName());
-    }
 }

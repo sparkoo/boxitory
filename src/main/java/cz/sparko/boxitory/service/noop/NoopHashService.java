@@ -14,9 +14,4 @@ public class NoopHashService implements HashService {
     public String getChecksum(String box) {
         return null;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj.getClass().getName().equals(NoopHashService.class.getName());
-    }
 }

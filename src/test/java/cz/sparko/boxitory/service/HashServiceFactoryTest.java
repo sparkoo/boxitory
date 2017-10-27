@@ -36,6 +36,6 @@ public class HashServiceFactoryTest {
         appProperties.setChecksum(type);
         HashService hashService = HashServiceFactory.createHashService(appProperties, new NoopHashStore());
 
-        assertEquals(hashService, expectedService);
+        assertEquals(hashService.getHashType(), expectedService.getHashType());
     }
 }

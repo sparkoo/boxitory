@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
 
 /**
  * This implementation of {@link HashService} calculates checksums from files on filesystem using {@link MessageDigest}
@@ -114,21 +113,5 @@ public class FilesystemDigestHashService implements HashService {
                 ", hashStore=" + hashStore +
                 ", hashAlgorithm=" + hashAlgorithm +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FilesystemDigestHashService that = (FilesystemDigestHashService) o;
-        return streamBufferLength == that.streamBufferLength &&
-                Objects.equals(hashStore, that.hashStore) &&
-                hashAlgorithm == that.hashAlgorithm;
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(streamBufferLength, hashStore, hashAlgorithm);
     }
 }
