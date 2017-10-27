@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class WrongRepositoryDirTest extends AbstractIntegrationTest {
 
     @Override
-    void createFolderStructure() { }
+    public void createFolderStructure() { }
 
     @Test
     public void givenWrongRepoDir_whenRequestRoot_then500() throws Exception {

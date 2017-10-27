@@ -1,4 +1,4 @@
-package cz.sparko.boxitory.test.integration;
+package cz.sparko.boxitory.test.integration.versionsort;
 
 import org.springframework.test.context.TestPropertySource;
 import org.testng.annotations.Test;
@@ -11,8 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties = {"box.sort_desc=true"})
-public class VersionSortDescTest extends VersionSortTest {
+@TestPropertySource(properties = {"box.sort_desc=false"})
+public class VersionSortAscTest extends VersionSortTest {
 
     @Test
     public void givenSortAsc_whenGetBox_thenVersionsSortedAsc() throws Exception {
@@ -20,10 +20,10 @@ public class VersionSortDescTest extends VersionSortTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.versions[0].version", is("12")))
-                .andExpect(jsonPath("$.versions[1].version", is("5")))
+                .andExpect(jsonPath("$.versions[0].version", is("1")))
+                .andExpect(jsonPath("$.versions[1].version", is("2")))
                 .andExpect(jsonPath("$.versions[2].version", is("3")))
-                .andExpect(jsonPath("$.versions[3].version", is("2")))
-                .andExpect(jsonPath("$.versions[4].version", is("1")));
+                .andExpect(jsonPath("$.versions[3].version", is("5")))
+                .andExpect(jsonPath("$.versions[4].version", is("12")));
     }
 }

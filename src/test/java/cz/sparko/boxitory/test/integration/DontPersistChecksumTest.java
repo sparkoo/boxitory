@@ -6,16 +6,12 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 @TestPropertySource(properties = {
         "box.checksum=md5",
@@ -29,7 +25,7 @@ public class DontPersistChecksumTest extends AbstractIntegrationTest {
     private File vmDir;
 
     @Override
-    void createFolderStructure() throws IOException {
+    public void createFolderStructure() throws IOException {
         super.createFolderStructure();
         vmDir = createDirInRepository(VM);
         File box = createFile(vmDir.getPath() + File.separator + BOX);

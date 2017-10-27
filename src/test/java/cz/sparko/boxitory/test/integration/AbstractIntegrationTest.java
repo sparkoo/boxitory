@@ -13,9 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.File;
@@ -29,10 +27,10 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
     public static final String UTF8_CHARSET = ";charset=UTF-8";
 
     @Autowired
-    AppProperties appProperties;
+    public AppProperties appProperties;
 
     @Autowired
-    MockMvc mockMvc;
+    public MockMvc mockMvc;
 
     @BeforeMethod
     public void setUp() throws IOException {
@@ -44,15 +42,15 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
         destroyFolderStructure();
     }
 
-    void createRepositoryDir() {
+    public void createRepositoryDir() {
         new File(appProperties.getHome()).mkdir();
     }
 
-    void createFolderStructure() throws IOException {
+    public void createFolderStructure() throws IOException {
         createRepositoryDir();
     }
 
-    void destroyFolderStructure() throws IOException {
+    public void destroyFolderStructure() throws IOException {
         FileUtils.deleteDirectory(new File(appProperties.getHome()));
     }
 
@@ -64,13 +62,13 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
         }
     }
 
-    File createDirInRepository(String vmName) {
+    public File createDirInRepository(String vmName) {
         File vmDir = new File(appProperties.getHome() + File.separator + vmName);
         vmDir.mkdir();
         return vmDir;
     }
 
-    File createFile(String filePath) throws IOException {
+    public File createFile(String filePath) throws IOException {
         File testFile = new File(filePath);
         testFile.createNewFile();
         return testFile;

@@ -28,7 +28,7 @@ public class FilesystemDescriptionProviderTest {
     private DescriptionProvider descriptionProvider;
 
     @BeforeClass
-    public void setUp() throws IOException {
+    public void setUp() {
         testAppProperties = new AppProperties();
         testAppProperties.setHome(TEST_HOME);
         testAppProperties.setHost_prefix(TEST_BOX_PREFIX);

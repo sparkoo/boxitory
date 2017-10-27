@@ -1,6 +1,7 @@
-package cz.sparko.boxitory.test.integration;
+package cz.sparko.boxitory.test.integration.latestversion;
 
 
+import cz.sparko.boxitory.test.integration.AbstractIntegrationTest;
 import org.springframework.test.context.TestPropertySource;
 import org.testng.annotations.Test;
 
@@ -14,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestPropertySource(properties = {"box.sort_desc=true"})
-public class LatestVersionTest extends AbstractIntegrationTest {
+public class LatestVersionSortDescTest extends AbstractIntegrationTest {
 
     private final String VM = "vm";
     private final String VM_1_VBOX = VM + "_1_virtualbox.box";
@@ -24,7 +25,7 @@ public class LatestVersionTest extends AbstractIntegrationTest {
     private final String VM_12_VBOX = VM + "_12_virtualbox.box";
 
     @Override
-    void createFolderStructure() throws IOException {
+    public void createFolderStructure() throws IOException {
         createRepositoryDir();
         File vmDir = createDirInRepository(VM);
         createFile(vmDir.getPath() + File.separator + VM_5_VBOX);

@@ -19,9 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@TestPropertySource(properties = {
-        "box.sort_desc=true",
-})
+@TestPropertySource(properties = {"box.sort_desc=true"})
 public class MultiProviderTest extends AbstractIntegrationTest {
 
     private final String VM = "vm";
@@ -30,7 +28,7 @@ public class MultiProviderTest extends AbstractIntegrationTest {
     private final String VM_2_LVIRT = VM + "_2_libvirt.box";
 
     @Override
-    void createFolderStructure() throws IOException {
+    public void createFolderStructure() throws IOException {
         createRepositoryDir();
         File vmDir = createDirInRepository(VM);
         createFile(vmDir.getPath() + File.separator + VM_1_VBOX);

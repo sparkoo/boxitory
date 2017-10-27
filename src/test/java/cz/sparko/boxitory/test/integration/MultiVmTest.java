@@ -21,9 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@TestPropertySource(properties = {
-        "box.sort_desc=true",
-})
+@TestPropertySource(properties = {"box.sort_desc=true"})
 public class MultiVmTest extends AbstractIntegrationTest {
 
     private final String VM1 = "vm1";
@@ -33,7 +31,7 @@ public class MultiVmTest extends AbstractIntegrationTest {
     private final String VM2_17_VBOX = VM2 + "_17_virtualbox.box";
 
     @Override
-    void createFolderStructure() throws IOException {
+    public void createFolderStructure() throws IOException {
         createRepositoryDir();
         File vm1Dir = createDirInRepository(VM1);
         File vm2Dir = createDirInRepository(VM2);

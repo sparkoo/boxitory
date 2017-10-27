@@ -1,6 +1,5 @@
 package cz.sparko.boxitory.test.integration;
 
-import org.hamcrest.Matchers;
 import org.springframework.test.context.TestPropertySource;
 import org.testng.annotations.Test;
 
@@ -30,7 +29,7 @@ public class PersistChecksumTest extends AbstractIntegrationTest {
     private File vmDir;
 
     @Override
-    void createFolderStructure() throws IOException {
+    public void createFolderStructure() throws IOException {
         super.createFolderStructure();
         vmDir = createDirInRepository(VM);
         File box = createFile(vmDir.getPath() + File.separator + BOX);
