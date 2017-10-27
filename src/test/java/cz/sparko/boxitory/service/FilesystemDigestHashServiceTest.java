@@ -14,8 +14,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 import static cz.sparko.boxitory.service.HashService.HashAlgorithm.MD5;
@@ -79,9 +77,8 @@ public class FilesystemDigestHashServiceTest {
 
     @Test(dataProvider = "filesAndHashes")
     public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(
-            HashAlgorithm algorithm, File file, String expectedChecksum) throws NoSuchAlgorithmException {
-        HashService hashService = new FilesystemDigestHashService(
-                MessageDigest.getInstance(algorithm.getMessageDigestName()), algorithm, 1024);
+            HashAlgorithm algorithm, File file, String expectedChecksum) {
+        HashService hashService = new FilesystemDigestHashService(algorithm, 1024);
 
         String checksum = hashService.getChecksum(file.getAbsolutePath());
 
@@ -89,8 +86,7 @@ public class FilesystemDigestHashServiceTest {
     }
 
     @Test
-    public void givenHashService_whenLoadHashReturnsHash_thenHashStoreLoadAndPersistAreCalled()
-            throws NoSuchAlgorithmException {
+    public void givenHashService_whenLoadHashReturnsHash_thenHashStoreLoadAndPersistAreCalled() {
         final String box = "box";
         final String hash = "hash";
         final HashAlgorithm algorithm = MD5;
@@ -101,8 +97,7 @@ public class FilesystemDigestHashServiceTest {
         HashStore hashStore = Mockito.mock(HashStore.class);
         Mockito.when(hashStore.loadHash(box, algorithm)).thenReturn(Optional.of(hash));
 
-        HashService hashService = new FilesystemDigestHashService(
-                MessageDigest.getInstance(algorithm.getMessageDigestName()), algorithm, hashStore);
+        HashService hashService = new FilesystemDigestHashService(algorithm, hashStore);
         hashService.getChecksum(box);
 
         Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);

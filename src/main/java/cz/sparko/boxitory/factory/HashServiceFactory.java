@@ -12,14 +12,13 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashServiceFactory {
 
-    public static HashService createHashService(AppProperties appProperties, HashStore hashStore) throws
-            NoSuchAlgorithmException {
+    public static HashService createHashService(AppProperties appProperties, HashStore hashStore) {
         HashAlgorithm algorithm = appProperties.getChecksum();
         if (algorithm == HashAlgorithm.DISABLED) {
             return new NoopHashService();
         } else {
-            return new FilesystemDigestHashService(MessageDigest.getInstance(algorithm.getMessageDigestName()),
-                    appProperties.getChecksum(), appProperties.getChecksum_buffer_size(), hashStore);
+            return new FilesystemDigestHashService(appProperties.getChecksum(), appProperties.getChecksum_buffer_size(),
+                                                   hashStore);
         }
     }
 }
