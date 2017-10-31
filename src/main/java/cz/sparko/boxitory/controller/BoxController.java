@@ -1,7 +1,5 @@
 package cz.sparko.boxitory.controller;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-import com.sun.org.apache.xpath.internal.SourceTree;
 import cz.sparko.boxitory.conf.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxVersion;
