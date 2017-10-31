@@ -7,9 +7,6 @@ import cz.sparko.boxitory.service.noop.NoopHashService;
 import cz.sparko.boxitory.service.HashService;
 import cz.sparko.boxitory.service.HashStore;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 public class HashServiceFactory {
 
     public static HashService createHashService(AppProperties appProperties, HashStore hashStore) {

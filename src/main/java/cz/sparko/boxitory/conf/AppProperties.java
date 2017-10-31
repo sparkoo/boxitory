@@ -14,6 +14,7 @@ public class AppProperties {
     private HashAlgorithm checksum = HashAlgorithm.DISABLED;
     private boolean checksum_persist = true;
     private int checksum_buffer_size = 1024;
+    private int checksum_ensure = 0;
 
     public String getHome() {
         return home;
@@ -35,9 +36,9 @@ public class AppProperties {
         return checksum_buffer_size;
     }
 
-    public boolean isChecksum_persist() {
-        return checksum_persist;
-    }
+    public boolean isChecksum_persist() { return checksum_persist; }
+
+    public int getChecksum_ensure() { return checksum_ensure; }
 
     public void setSort_desc(boolean sort_desc) {
         this.sort_desc = sort_desc;
@@ -62,4 +63,6 @@ public class AppProperties {
     public void setChecksum_persist(boolean checksum_persist) {
         this.checksum_persist = checksum_persist;
     }
+
+    public void setChecksum_ensure(int checksum_ensure) { this.checksum_ensure = checksum_ensure; }
 }
