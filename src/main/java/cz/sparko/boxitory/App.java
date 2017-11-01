@@ -40,7 +40,7 @@ public class App {
 
     @Bean
     @Autowired
-    public HashService hashService(AppProperties appProperties, HashStore hashStore) throws NoSuchAlgorithmException {
+    public HashService hashService(AppProperties appProperties, HashStore hashStore) {
         return HashServiceFactory.createHashService(appProperties, hashStore);
     }
 
