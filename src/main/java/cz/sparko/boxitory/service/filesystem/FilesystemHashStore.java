@@ -130,6 +130,7 @@ public class FilesystemHashStore implements HashStore {
      */
     private static class ChecksumFileHandler {
         private final static String CHECKSUM_FILE_SEPARATOR = "  ";
+        private final static String CHECKSUM_FILE_SEPARATOR_REGEX = " {2}";
 
         /**
          * Creates valid checksum file content from provided {@code hash} and {@link File} {@code forFile}.
@@ -158,7 +159,7 @@ public class FilesystemHashStore implements HashStore {
             }
 
             String boxFilename = parseOriginalFilenameFromChecksumFile(checksumFile);
-            String[] hashSplittedLine = hashFileLines.get(0).split(CHECKSUM_FILE_SEPARATOR);
+            String[] hashSplittedLine = hashFileLines.get(0).split(CHECKSUM_FILE_SEPARATOR_REGEX);
             if (hashSplittedLine.length != 2 || !hashSplittedLine[1].equals(boxFilename)) {
                 throw new IllegalStateException("Checksum file has wrong format!");
             }

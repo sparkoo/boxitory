@@ -6,6 +6,7 @@ import java.util.Objects;
 /**
  * Full description of Vagrant's box as needed in http API.
  */
+@SuppressWarnings("unused")
 public class Box {
     private final String name;
     private final String description;

@@ -45,7 +45,7 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     @Override
     public List<String> getBoxes() {
-        return listPotencialBoxDirs()
+        return listPotentialBoxDirs()
                 .filter(this::containsValidBoxFile)
                 .map(File::getName)
                 .sorted()
@@ -69,17 +69,17 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private Optional<File> getBoxDir(String boxName) {
-        return listPotencialBoxDirs()
+        return listPotentialBoxDirs()
                 .filter(File::isDirectory)
                 .filter(f -> f.getName().equals(boxName))
                 .findFirst();
     }
 
-    private Stream<File> listPotencialBoxDirs() {
-        File[] potencialBoxDirs = Optional.ofNullable(boxHome.listFiles(File::isDirectory))
+    private Stream<File> listPotentialBoxDirs() {
+        File[] potentialBoxDirs = Optional.ofNullable(boxHome.listFiles(File::isDirectory))
                 .orElseThrow(() -> new IllegalStateException(
                         "Repository directory [" + boxHome.getAbsolutePath() + "] is not a valid directory."));
-        return Arrays.stream(potencialBoxDirs);
+        return Arrays.stream(potentialBoxDirs);
     }
 
     private Map<String, List<File>> groupBoxFilesByVersion(File boxDir) {

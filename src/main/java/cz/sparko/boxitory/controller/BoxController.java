@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class BoxController {
-    private BoxRepository boxRepository;
+    private final BoxRepository boxRepository;
 
     @Autowired
     public BoxController(BoxRepository boxRepository) {
@@ -32,6 +31,7 @@ public class BoxController {
                 .orElseThrow(() -> NotFoundException.boxNotFound(boxName));
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Model model) {
         model.addAttribute("boxes", boxRepository.getBoxes());
@@ -43,9 +43,7 @@ public class BoxController {
     public String latestBoxVersion(@PathVariable String boxName) {
         return boxRepository.getBox(boxName)
                 .orElseThrow(() -> NotFoundException.boxNotFound(boxName))
-                .getVersions().stream()
-                .sorted(BoxVersion.VERSION_COMPARATOR.reversed())
-                .findFirst()
+                .getVersions().stream().max(BoxVersion.VERSION_COMPARATOR)
                 .map(BoxVersion::getVersion)
                 .orElseThrow(() -> NotFoundException.boxNotFound(boxName));
     }

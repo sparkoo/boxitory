@@ -4,7 +4,7 @@ import java.util.Optional;
 
 /**
  * Provides descriptions for box's versions. Implementation is not responsible for storing or handling descriptions
- * in any way. It just takes one by given parameters from underlaying storage and provides it to caller.
+ * in any way. It just takes one by given parameters from underlying storage and provides it to caller.
  */
 public interface DescriptionProvider {
     /**
