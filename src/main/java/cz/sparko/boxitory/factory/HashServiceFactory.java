@@ -1,11 +1,11 @@
 package cz.sparko.boxitory.factory;
 
 import cz.sparko.boxitory.conf.AppProperties;
-import cz.sparko.boxitory.service.filesystem.FilesystemDigestHashService;
-import cz.sparko.boxitory.service.HashService.HashAlgorithm;
-import cz.sparko.boxitory.service.noop.NoopHashService;
 import cz.sparko.boxitory.service.HashService;
+import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 import cz.sparko.boxitory.service.HashStore;
+import cz.sparko.boxitory.service.filesystem.FilesystemDigestHashService;
+import cz.sparko.boxitory.service.noop.NoopHashService;
 
 public class HashServiceFactory {
 
