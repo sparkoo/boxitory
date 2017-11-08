@@ -2,7 +2,10 @@ language: java
 jdk:
   - oraclejdk8
 sudo: false
-script: ./mvnw clean verify cobertura:cobertura-integration-test
+script:
+- ./mvnw clean verify cobertura:cobertura-integration-test
+- mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=target/site/cobertura/coverage.xml \
+-DprojectToken=${CODACY_TOKEN} -DapiToken=${CODACY_TOKEN}
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
