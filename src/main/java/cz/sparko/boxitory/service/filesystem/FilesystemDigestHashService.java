@@ -98,8 +98,6 @@ public class FilesystemDigestHashService implements HashService {
             throw new RuntimeException(
                     "Error while getting checksum for file " + box + " reason: " + e.getMessage(), e);
         }
-
-
     }
 
     private String getHash(byte[] digestBytes) {

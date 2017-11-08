@@ -70,14 +70,10 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
     }
 
     private void validateArgs(String boxName, String version) {
-        if (boxName == null) {
-            throw new NullPointerException("[boxName] must not be null nor empty");
-        } else if (boxName.isEmpty()) {
+        if (boxName == null || boxName.isEmpty()) {
             throw new IllegalArgumentException("[boxName] must not be null nor empty");
         }
-        if (version == null) {
-            throw new NullPointerException("[boxName] must not be null nor empty");
-        } else if (version.isEmpty()) {
+        if (version == null || version.isEmpty()) {
             throw new IllegalArgumentException("[boxName] must not be null nor empty");
         }
     }

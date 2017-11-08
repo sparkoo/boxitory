@@ -118,13 +118,13 @@ public class FilesystemDescriptionProviderTest {
         assertFalse(descriptionProvider.getDescription("f27", "1").isPresent());
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void givenNullBox_whenGet_thenThrowNpe() {
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void givenNullBox_whenGet_thenThrowIae() {
         descriptionProvider.getDescription(null, "1");
     }
 
-    @Test(expectedExceptions = NullPointerException.class)
-    public void givenNullVersion_whenGet_thenThrowNpe() {
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void givenNullVersion_whenGet_thenThrowIae() {
         descriptionProvider.getDescription("1", null);
     }
 
