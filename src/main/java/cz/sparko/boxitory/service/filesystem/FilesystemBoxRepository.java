@@ -7,16 +7,13 @@ import cz.sparko.boxitory.domain.BoxVersion;
 import cz.sparko.boxitory.service.BoxRepository;
 import cz.sparko.boxitory.service.DescriptionProvider;
 import cz.sparko.boxitory.service.HashService;
+import cz.sparko.boxitory.service.HashStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,18 +25,27 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final String hostPrefix;
     private final File boxHome;
     private final HashService hashService;
+    private final HashStore hashStore;
     private final boolean sortDesc;
+    private final HashAlgorithm hashAlgorithm;
+    private final int ensuredChecksums;
+    private int processedVersions;
 
     private final DescriptionProvider descriptionProvider;
 
     public FilesystemBoxRepository(AppProperties appProperties,
                                    HashService hashService,
+                                   HashStore hashStore,
                                    DescriptionProvider descriptionProvider) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();
         this.hashService = hashService;
+        this.hashStore = hashStore;
         this.descriptionProvider = descriptionProvider;
+        this.hashAlgorithm = appProperties.getChecksum();
+        this.ensuredChecksums = appProperties.getChecksum_ensure();
+        this.processedVersions = 0;
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
@@ -54,7 +60,7 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     @Override
     public Optional<Box> getBox(String boxName) {
-        Map<String, List<File>> groupedBoxFiles = new HashMap<>();
+        Map<String, List<File>> groupedBoxFiles = new TreeMap<>(Collections.reverseOrder());
         getBoxDir(boxName)
                 .ifPresent(d -> groupedBoxFiles.putAll(groupBoxFilesByVersion(d)));
 
@@ -113,6 +119,7 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles, String boxName) {
         List<BoxVersion> boxVersions = new ArrayList<>();
+        processedVersions = 0;
         groupedFiles.forEach(
                 (key, value) -> boxVersions.add(createBoxVersion(key, value, boxName))
         );
@@ -125,11 +132,13 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private BoxVersion createBoxVersion(String version, List<File> fileList, String boxName) {
-        return new BoxVersion(
+         BoxVersion boxVersion = new BoxVersion(
                 version,
                 descriptionProvider.getDescription(boxName, version).orElse(null),
                 fileList.stream().map(this::createBoxProviderFromFile).collect(Collectors.toList())
         );
+        processedVersions++;
+        return  boxVersion;
     }
 
     private BoxProvider createBoxProviderFromFile(File file) {
@@ -144,7 +153,9 @@ public class FilesystemBoxRepository implements BoxRepository {
                 hostPrefix + file.getAbsolutePath(),
                 provider,
                 hashService.getHashType(),
-                hashService.getChecksum(file.getAbsolutePath())
+                (processedVersions < ensuredChecksums)
+                        ? hashService.getChecksum(file.getAbsolutePath())
+                        : hashStore.loadHash(file.getAbsolutePath(), hashAlgorithm).orElse(null)
         );
     }
 
