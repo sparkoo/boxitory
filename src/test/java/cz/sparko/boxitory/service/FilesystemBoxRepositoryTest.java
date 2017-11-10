@@ -7,6 +7,7 @@ import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.service.filesystem.FilesystemBoxRepository;
 import cz.sparko.boxitory.service.noop.NoopDescriptionProvider;
 import cz.sparko.boxitory.service.noop.NoopHashService;
+import cz.sparko.boxitory.service.noop.NoopHashStore;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.AfterClass;
@@ -140,8 +141,10 @@ public class FilesystemBoxRepositoryTest {
 
     @Test(dataProvider = "boxes")
     public void givenRepository_whenGetBox_thenGetWhenFound(String boxName, Optional<Box> expectedResult) {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
-                new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(),
+                new NoopHashStore(), new NoopDescriptionProvider()
+        );
 
         Optional<Box> providedBox = boxRepository.getBox(boxName);
 
@@ -153,8 +156,10 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortAscending_whenGetBox_thenVersionsSortedAsc() {
         testAppProperties.setSort_desc(false);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
-                new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(),
+                new NoopHashStore(), new NoopDescriptionProvider()
+        );
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "1");
@@ -166,8 +171,10 @@ public class FilesystemBoxRepositoryTest {
     public void givenSortDescending_whenGetBox_thenVersionsSortedDesc() {
         testAppProperties.setSort_desc(true);
 
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
-                new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(),
+                new NoopHashStore(), new NoopDescriptionProvider()
+        );
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
         assertEquals(versions.get(0).getVersion(), "3");
@@ -177,8 +184,10 @@ public class FilesystemBoxRepositoryTest {
 
     @Test
     public void givenValidRepositoryWithBoxes_whenGetBoxes_thenGetValidBoxes() {
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
-                new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(),
+                new NoopHashStore(), new NoopDescriptionProvider()
+        );
 
         List<String> boxes = boxRepository.getBoxes();
         assertTrue(boxes.containsAll(Arrays.asList("f25", "f26", "f28", "f29")));
@@ -188,16 +197,20 @@ public class FilesystemBoxRepositoryTest {
     @Test(expectedExceptions = IllegalStateException.class)
     public void givenNonExistingRepositoryDir_whenGetBoxes_thenThrowNotFoundException() {
         testAppProperties.setHome("/some/not/existing/dir");
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
-                new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(),
+                new NoopHashStore(), new NoopDescriptionProvider()
+        );
         boxRepository.getBoxes();
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
     public void givenNonExistingRepositoryDir_whenGetBox_thenThrowNotFoundException() {
         testAppProperties.setHome("/some/not/existing/dir");
-        BoxRepository boxRepository = new FilesystemBoxRepository(testAppProperties, new NoopHashService(),
-                new NoopDescriptionProvider());
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(),
+                new NoopHashStore(), new NoopDescriptionProvider()
+        );
         boxRepository.getBox("invalid_repo_dir");
     }
 
