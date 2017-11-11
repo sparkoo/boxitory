@@ -46,7 +46,7 @@ public class ParallelChecksumCalcTest extends AbstractIntegrationTest {
             Exception {
         Thread requestVm1 = new Thread(() -> {
             try {
-                mockMvc.perform(get("/" + VM2));
+                mockMvc.perform(get("/" + VM1));
             } catch (Exception e) {
                 e.printStackTrace();
             }
