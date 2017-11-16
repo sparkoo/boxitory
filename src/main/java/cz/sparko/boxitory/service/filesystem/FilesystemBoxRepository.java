@@ -4,13 +4,12 @@ import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
+import cz.sparko.boxitory.model.CalculatedChecksumCounter;
 import cz.sparko.boxitory.service.BoxRepository;
 import cz.sparko.boxitory.service.DescriptionProvider;
 import cz.sparko.boxitory.service.HashService;
-import cz.sparko.boxitory.service.HashStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 
 import java.io.File;
 import java.util.*;
@@ -25,27 +24,19 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final String hostPrefix;
     private final File boxHome;
     private final HashService hashService;
-    private final HashStore hashStore;
     private final boolean sortDesc;
-    private final HashAlgorithm hashAlgorithm;
-    private final int ensuredChecksums;
-    private int processedVersions;
-
+    private final int ensuredChecksum;
     private final DescriptionProvider descriptionProvider;
 
     public FilesystemBoxRepository(AppProperties appProperties,
                                    HashService hashService,
-                                   HashStore hashStore,
                                    DescriptionProvider descriptionProvider) {
         this.boxHome = new File(appProperties.getHome());
         this.hostPrefix = appProperties.getHost_prefix();
         this.sortDesc = appProperties.isSort_desc();
         this.hashService = hashService;
-        this.hashStore = hashStore;
         this.descriptionProvider = descriptionProvider;
-        this.hashAlgorithm = appProperties.getChecksum();
-        this.ensuredChecksums = appProperties.getChecksum_ensure();
-        this.processedVersions = 0;
+        this.ensuredChecksum = appProperties.getChecksum_ensure();
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
@@ -119,9 +110,9 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private List<BoxVersion> createBoxVersionsFromGroupedFiles(Map<String, List<File>> groupedFiles, String boxName) {
         List<BoxVersion> boxVersions = new ArrayList<>();
-        processedVersions = 0;
+        CalculatedChecksumCounter checksumCounter = new CalculatedChecksumCounter(ensuredChecksum);
         groupedFiles.forEach(
-                (key, value) -> boxVersions.add(createBoxVersion(key, value, boxName))
+                (key, value) -> boxVersions.add(createBoxVersion(key, value, boxName, checksumCounter))
         );
         if (sortDesc) {
             boxVersions.sort(VERSION_COMPARATOR.reversed());
@@ -131,17 +122,18 @@ public class FilesystemBoxRepository implements BoxRepository {
         return boxVersions;
     }
 
-    private BoxVersion createBoxVersion(String version, List<File> fileList, String boxName) {
+    private BoxVersion createBoxVersion(String version, List<File> fileList,
+                                        String boxName, CalculatedChecksumCounter checksumCounter) {
          BoxVersion boxVersion = new BoxVersion(
                 version,
                 descriptionProvider.getDescription(boxName, version).orElse(null),
-                fileList.stream().map(this::createBoxProviderFromFile).collect(Collectors.toList())
+                fileList.stream().map((file) -> createBoxProviderFromFile(file, checksumCounter)).collect(Collectors.toList())
         );
-        processedVersions++;
+        checksumCounter.increment();
         return  boxVersion;
     }
 
-    private BoxProvider createBoxProviderFromFile(File file) {
+    private BoxProvider createBoxProviderFromFile(File file, CalculatedChecksumCounter checksumCounter) {
         String filename = file.getName();
         List<String> parsedFilename = Arrays.asList(filename.split("_"));
 
@@ -153,9 +145,10 @@ public class FilesystemBoxRepository implements BoxRepository {
                 hostPrefix + file.getAbsolutePath(),
                 provider,
                 hashService.getHashType(),
-                (processedVersions < ensuredChecksums)
-                        ? hashService.getChecksum(file.getAbsolutePath())
-                        : hashStore.loadHash(file.getAbsolutePath(), hashAlgorithm).orElse(null)
+                hashService.getChecksum(
+                        file.getAbsolutePath(),
+                        !checksumCounter.isLimitOfCalculatedChecksumExceeded()
+                )
         );
     }
 

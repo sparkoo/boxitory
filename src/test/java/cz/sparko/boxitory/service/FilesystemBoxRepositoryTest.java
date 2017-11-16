@@ -7,7 +7,6 @@ import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.service.filesystem.FilesystemBoxRepository;
 import cz.sparko.boxitory.service.noop.NoopDescriptionProvider;
 import cz.sparko.boxitory.service.noop.NoopHashService;
-import cz.sparko.boxitory.service.noop.NoopHashStore;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.AfterClass;
@@ -143,7 +142,7 @@ public class FilesystemBoxRepositoryTest {
     public void givenRepository_whenGetBox_thenGetWhenFound(String boxName, Optional<Box> expectedResult) {
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
-                new NoopHashStore(), new NoopDescriptionProvider()
+                new NoopDescriptionProvider()
         );
 
         Optional<Box> providedBox = boxRepository.getBox(boxName);
@@ -158,7 +157,7 @@ public class FilesystemBoxRepositoryTest {
 
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
-                new NoopHashStore(), new NoopDescriptionProvider()
+                new NoopDescriptionProvider()
         );
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
@@ -173,7 +172,7 @@ public class FilesystemBoxRepositoryTest {
 
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
-                new NoopHashStore(), new NoopDescriptionProvider()
+                new NoopDescriptionProvider()
         );
 
         List<BoxVersion> versions = boxRepository.getBox("f29").get().getVersions();
@@ -186,7 +185,7 @@ public class FilesystemBoxRepositoryTest {
     public void givenValidRepositoryWithBoxes_whenGetBoxes_thenGetValidBoxes() {
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
-                new NoopHashStore(), new NoopDescriptionProvider()
+                new NoopDescriptionProvider()
         );
 
         List<String> boxes = boxRepository.getBoxes();
@@ -199,7 +198,7 @@ public class FilesystemBoxRepositoryTest {
         testAppProperties.setHome("/some/not/existing/dir");
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
-                new NoopHashStore(), new NoopDescriptionProvider()
+                new NoopDescriptionProvider()
         );
         boxRepository.getBoxes();
     }
@@ -209,7 +208,7 @@ public class FilesystemBoxRepositoryTest {
         testAppProperties.setHome("/some/not/existing/dir");
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
-                new NoopHashStore(), new NoopDescriptionProvider()
+                new NoopDescriptionProvider()
         );
         boxRepository.getBox("invalid_repo_dir");
     }

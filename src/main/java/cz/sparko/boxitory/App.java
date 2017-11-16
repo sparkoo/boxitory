@@ -26,9 +26,8 @@ public class App {
     @Autowired
     public BoxRepository boxRepository(AppProperties appProperties,
                                        HashService hashService,
-                                       HashStore hashStore,
                                        DescriptionProvider descriptionProvider) {
-        return new FilesystemBoxRepository(appProperties, hashService, hashStore, descriptionProvider);
+        return new FilesystemBoxRepository(appProperties, hashService, descriptionProvider);
     }
 
     @Bean

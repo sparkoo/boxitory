@@ -101,6 +101,25 @@ public class FilesystemDigestHashServiceTest {
         hashService.getChecksum(box);
 
         Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
+    }
+
+    @Test
+    public void givenHashService_whenLoadHashNotReturnsHash_thenCalculateHashAndHashStorePersistAreCalled() {
+        final File boxFile = new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box");
+        final String box = boxFile.getAbsolutePath();
+        final String hash = "86462c346f1358ddbf4f137fb5da43cf";
+        final HashAlgorithm algorithm = MD5;
+
+        AppProperties properties = new AppProperties();
+        properties.setChecksum(algorithm);
+
+        HashStore hashStore = Mockito.mock(HashStore.class);
+        Mockito.when(hashStore.loadHash(box, algorithm)).thenReturn(Optional.empty());
+
+        HashService hashService = new FilesystemDigestHashService(algorithm, hashStore);
+        hashService.getChecksum(box);
+
+        Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
         Mockito.verify(hashStore, Mockito.times(1)).persist(box, hash, algorithm);
     }
 }

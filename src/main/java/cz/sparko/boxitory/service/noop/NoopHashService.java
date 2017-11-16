@@ -13,4 +13,9 @@ public class NoopHashService implements HashService {
     public String getChecksum(String box) {
         return null;
     }
+
+    @Override
+    public String getChecksum(String box, boolean canCalculate) {
+        return null;
+    }
 }

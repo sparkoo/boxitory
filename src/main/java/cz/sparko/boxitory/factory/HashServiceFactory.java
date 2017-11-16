@@ -14,8 +14,11 @@ public class HashServiceFactory {
         if (algorithm == HashAlgorithm.DISABLED) {
             return new NoopHashService();
         } else {
-            return new FilesystemDigestHashService(appProperties.getChecksum(), appProperties.getChecksum_buffer_size(),
-                                                   hashStore);
+            return new FilesystemDigestHashService(
+                    appProperties.getChecksum(),
+                    appProperties.getChecksum_buffer_size(),
+                    hashStore
+            );
         }
     }
 }
