@@ -30,7 +30,7 @@ import static org.testng.Assert.assertTrue;
 @SpringBootTest
 public class FilesystemBoxRepositoryTest {
 
-    private final String TEST_HOME = "target/test_repository";
+    private final String TEST_HOME = "target" + File.separator + "test_repository";
     private final String TEST_BOX_PREFIX = "sftp://my_test_server:";
     private final String VERSION_DESCRIPTION = null;
     private File testHomeDir;
@@ -58,11 +58,11 @@ public class FilesystemBoxRepositoryTest {
 
     private void createTestFolderStructure() throws IOException {
         testHomeDir.mkdir();
-        File f25 = new File(testHomeDir.getAbsolutePath() + "/f25");
-        File f26 = new File(testHomeDir.getAbsolutePath() + "/f26");
-        File f27 = new File(testHomeDir.getAbsolutePath() + "/f27");
-        File f28 = new File(testHomeDir.getAbsolutePath() + "/f28");
-        File f29 = new File(testHomeDir.getAbsolutePath() + "/f29");
+        File f25 = new File(testHomeDir.getAbsolutePath() + File.separator + "f25");
+        File f26 = new File(testHomeDir.getAbsolutePath() + File.separator + "f26");
+        File f27 = new File(testHomeDir.getAbsolutePath() + File.separator + "f27");
+        File f28 = new File(testHomeDir.getAbsolutePath() + File.separator + "f28");
+        File f29 = new File(testHomeDir.getAbsolutePath() + File.separator + "f29");
 
         f25.mkdir();
         f26.mkdir();
@@ -70,22 +70,22 @@ public class FilesystemBoxRepositoryTest {
         f28.mkdir();
         f29.mkdir();
 
-        new File(f25.getAbsolutePath() + "/f25_1_virtualbox.box").createNewFile();
-        new File(f25.getAbsolutePath() + "/f25_2_virtualbox.box").createNewFile();
+        new File(f25.getAbsolutePath() + File.separator + "f25_1_virtualbox.box").createNewFile();
+        new File(f25.getAbsolutePath() + File.separator + "f25_2_virtualbox.box").createNewFile();
 
-        new File(f26.getAbsolutePath() + "/f26_1_virtualbox.box").createNewFile();
-        new File(f26.getAbsolutePath() + "/f26_2_virtualbox.box").createNewFile();
-        new File(f26.getAbsolutePath() + "/f26_3_virtualbox.box").createNewFile();
+        new File(f26.getAbsolutePath() + File.separator + "f26_1_virtualbox.box").createNewFile();
+        new File(f26.getAbsolutePath() + File.separator + "f26_2_virtualbox.box").createNewFile();
+        new File(f26.getAbsolutePath() + File.separator + "f26_3_virtualbox.box").createNewFile();
 
-        new File(f27.getAbsolutePath() + "/wrongFileFormat.box").createNewFile();
+        new File(f27.getAbsolutePath() + File.separator + "wrongFileFormat.box").createNewFile();
 
-        new File(f28.getAbsolutePath() + "/f28_1_virtualbox.box").createNewFile();
-        new File(f28.getAbsolutePath() + "/f28_1_vmware.box").createNewFile();
-        new File(f28.getAbsolutePath() + "/f28_2_virtualbox.box").createNewFile();
+        new File(f28.getAbsolutePath() + File.separator + "f28_1_virtualbox.box").createNewFile();
+        new File(f28.getAbsolutePath() + File.separator + "f28_1_vmware.box").createNewFile();
+        new File(f28.getAbsolutePath() + File.separator + "f28_2_virtualbox.box").createNewFile();
 
-        new File(f29.getAbsolutePath() + "/f29_1_virtualbox.box").createNewFile();
-        new File(f29.getAbsolutePath() + "/f29_3_virtualbox.box").createNewFile();
-        new File(f29.getAbsolutePath() + "/f29_2_virtualbox.box").createNewFile();
+        new File(f29.getAbsolutePath() + File.separator + "f29_1_virtualbox.box").createNewFile();
+        new File(f29.getAbsolutePath() + File.separator + "f29_3_virtualbox.box").createNewFile();
+        new File(f29.getAbsolutePath() + File.separator + "f29_2_virtualbox.box").createNewFile();
     }
 
     @DataProvider
@@ -215,7 +215,9 @@ public class FilesystemBoxRepositoryTest {
     }
 
     private String composePath(String boxName, String version, String provider) {
-        return String.format("%s%s/%s/%s_%s_%s.box", TEST_BOX_PREFIX, testHomeDir.getAbsolutePath(),
+        return String.format("%s%s" + File.separator + "%s" + File.separator + "%s_%s_%s.box",
+                TEST_BOX_PREFIX,
+                testHomeDir.getAbsolutePath(),
                 boxName, boxName, version, provider);
     }
 }

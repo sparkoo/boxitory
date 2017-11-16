@@ -9,6 +9,7 @@ import java.util.Optional;
  * Does nothing. Used when checksum persist is disabled.
  */
 public class NoopHashStore implements HashStore {
+
     @Override
     public void persist(String boxFilename, String hash, HashAlgorithm algorithm) {
     }

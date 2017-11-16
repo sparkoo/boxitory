@@ -139,7 +139,7 @@ public class FilesystemHashStore implements HashStore {
          * @param forFile file of calculated hash
          * @return valid content of the checksum file
          */
-        static String createValidChecksumFileContent(String hash, File forFile) {
+        private static String createValidChecksumFileContent(String hash, File forFile) {
             return hash + CHECKSUM_FILE_SEPARATOR + forFile.getName();
         }
 
@@ -151,7 +151,7 @@ public class FilesystemHashStore implements HashStore {
          * @throws IOException           when some error when reading the file occurs
          * @throws IllegalStateException when checksum file has wrong format
          */
-        static String readHashFromChecksumFile(File checksumFile)
+        private static String readHashFromChecksumFile(File checksumFile)
                 throws IOException, IllegalStateException {
             List<String> hashFileLines = Files.readAllLines(checksumFile.toPath());
             if (hashFileLines.size() != 1) {
