@@ -81,8 +81,7 @@ public class FilesystemDigestHashService implements HashService {
     @Override
     public String getChecksum(String box, boolean canCalculate) {
         if (canCalculate) {
-            return hashStore.loadHash(box, hashAlgorithm)
-                    .orElseGet(() -> calculateHashAndStore(box));
+            return getChecksum(box);
         }
 
         return hashStore.loadHash(box, hashAlgorithm)
