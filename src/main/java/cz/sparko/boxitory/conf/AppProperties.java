@@ -14,7 +14,7 @@ public class AppProperties {
     private HashAlgorithm checksum = HashAlgorithm.DISABLED;
     private boolean checksum_persist = true;
     private int checksum_buffer_size = 1024;
-    private int checksum_ensure = 0;
+    private int checksum_ensure = 1;
 
     public String getHome() {
         return home;
