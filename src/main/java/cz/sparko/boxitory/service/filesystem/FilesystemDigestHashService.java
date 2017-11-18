@@ -85,7 +85,7 @@ public class FilesystemDigestHashService implements HashService {
         }
 
         return hashStore.loadHash(box, hashAlgorithm)
-                .orElseGet(null);
+                .orElse(null);
     }
 
     private String calculateHashAndStore(String box) {

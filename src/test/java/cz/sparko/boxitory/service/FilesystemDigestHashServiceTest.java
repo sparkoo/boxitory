@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static cz.sparko.boxitory.service.HashService.HashAlgorithm.MD5;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 @SpringBootTest
 public class FilesystemDigestHashServiceTest {
@@ -76,13 +77,33 @@ public class FilesystemDigestHashServiceTest {
     }
 
     @Test(dataProvider = "filesAndHashes")
-    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(
+    public void givenHashService_whenGetChecksum_thenChecksumIsEquals(
             HashAlgorithm algorithm, File file, String expectedChecksum) {
         HashService hashService = new FilesystemDigestHashService(algorithm, 1024);
 
         String checksum = hashService.getChecksum(file.getAbsolutePath());
 
         assertEquals(checksum, expectedChecksum);
+    }
+
+    @Test(dataProvider = "filesAndHashes")
+    public void givenHashService_whenGetChecksumWithTurnOnLiveHashCalculation_thenChecksumIsEquals(
+            HashAlgorithm algorithm, File file, String expectedChecksum) {
+        HashService hashService = new FilesystemDigestHashService(algorithm, 1024);
+
+        String checksum = hashService.getChecksum(file.getAbsolutePath(), true);
+
+        assertEquals(checksum, expectedChecksum);
+    }
+
+    @Test(dataProvider = "filesAndHashes")
+    public void givenHashService_whenGetChecksumWithTurnOffLiveHashCalculation_thenChecksumIsNull(
+            HashAlgorithm algorithm, File file, String expectedChecksum) {
+        HashService hashService = new FilesystemDigestHashService(algorithm, 1024);
+
+        String checksum = hashService.getChecksum(file.getAbsolutePath(), false);
+
+        assertNull(checksum);
     }
 
     @Test
