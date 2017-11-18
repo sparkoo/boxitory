@@ -107,7 +107,7 @@ public class FilesystemDigestHashServiceTest {
     }
 
     @Test
-    public void givenHashService_whenLoadHashReturnsHash_thenHashStoreLoadAndPersistAreCalled() {
+    public void givenHashService_whenLoadHashReturnsHash_thenHashStoreLoadIsCalled() {
         final String box = "box";
         final String hash = "hash";
         final HashAlgorithm algorithm = MD5;
@@ -142,5 +142,24 @@ public class FilesystemDigestHashServiceTest {
 
         Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
         Mockito.verify(hashStore, Mockito.times(1)).persist(box, hash, algorithm);
+    }
+
+    @Test
+    public void givenHashService_whenLiveHashCalculationIsTurnOffAndLoadHashReturnsHash_thenHashStoreLoadIsCalled() {
+        final String box = "box";
+        final String hash = "hash";
+        final HashAlgorithm algorithm = MD5;
+
+        AppProperties properties = new AppProperties();
+        properties.setChecksum(algorithm);
+
+        HashStore hashStore = Mockito.mock(HashStore.class);
+        Mockito.when(hashStore.loadHash(box, algorithm)).thenReturn(Optional.of(hash));
+
+        HashService hashService = new FilesystemDigestHashService(algorithm, hashStore);
+        String loadedHash = hashService.getChecksum(box, false);
+        assertEquals(loadedHash, hash);
+
+        Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
     }
 }
