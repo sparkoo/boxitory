@@ -124,12 +124,12 @@ public class FilesystemBoxRepository implements BoxRepository {
 
     private BoxVersion createBoxVersion(String version, List<File> fileList,
                                         String boxName, CalculatedChecksumCounter checksumCounter) {
-         BoxVersion boxVersion = new BoxVersion(
+        checksumCounter.increment();
+        BoxVersion boxVersion = new BoxVersion(
                 version,
                 descriptionProvider.getDescription(boxName, version).orElse(null),
                 fileList.stream().map((file) -> createBoxProviderFromFile(file, checksumCounter)).collect(Collectors.toList())
         );
-        checksumCounter.increment();
         return  boxVersion;
     }
 
