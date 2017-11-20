@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static cz.sparko.boxitory.service.HashService.HashAlgorithm.MD5;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 @SpringBootTest
 public class FilesystemDigestHashServiceTest {
@@ -76,7 +77,7 @@ public class FilesystemDigestHashServiceTest {
     }
 
     @Test(dataProvider = "filesAndHashes")
-    public void givenHashService_whenGetChecksum_thenChecksumsAreEquals(
+    public void givenHashService_whenGetChecksum_thenChecksumIsEquals(
             HashAlgorithm algorithm, File file, String expectedChecksum) {
         HashService hashService = new FilesystemDigestHashService(algorithm, 1024);
 
@@ -85,8 +86,28 @@ public class FilesystemDigestHashServiceTest {
         assertEquals(checksum, expectedChecksum);
     }
 
+    @Test(dataProvider = "filesAndHashes")
+    public void givenHashService_whenGetChecksumWithTurnOnLiveHashCalculation_thenChecksumIsEquals(
+            HashAlgorithm algorithm, File file, String expectedChecksum) {
+        HashService hashService = new FilesystemDigestHashService(algorithm, 1024);
+
+        String checksum = hashService.getChecksum(file.getAbsolutePath(), true);
+
+        assertEquals(checksum, expectedChecksum);
+    }
+
+    @Test(dataProvider = "filesAndHashes")
+    public void givenHashService_whenGetChecksumWithTurnOffLiveHashCalculation_thenChecksumIsNull(
+            HashAlgorithm algorithm, File file, String expectedChecksum) {
+        HashService hashService = new FilesystemDigestHashService(algorithm, 1024);
+
+        String checksum = hashService.getChecksum(file.getAbsolutePath(), false);
+
+        assertNull(checksum);
+    }
+
     @Test
-    public void givenHashService_whenLoadHashReturnsHash_thenHashStoreLoadAndPersistAreCalled() {
+    public void givenHashService_whenLoadHashReturnsHash_thenHashStoreLoadIsCalled() {
         final String box = "box";
         final String hash = "hash";
         final HashAlgorithm algorithm = MD5;
@@ -101,6 +122,44 @@ public class FilesystemDigestHashServiceTest {
         hashService.getChecksum(box);
 
         Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
+    }
+
+    @Test
+    public void givenHashService_whenLoadHashNotReturnsHash_thenCalculateHashAndHashStorePersistAreCalled() {
+        final File boxFile = new File(testHomeDir.getAbsolutePath() + "/f25/f25_1_virtualbox.box");
+        final String box = boxFile.getAbsolutePath();
+        final String hash = "86462c346f1358ddbf4f137fb5da43cf";
+        final HashAlgorithm algorithm = MD5;
+
+        AppProperties properties = new AppProperties();
+        properties.setChecksum(algorithm);
+
+        HashStore hashStore = Mockito.mock(HashStore.class);
+        Mockito.when(hashStore.loadHash(box, algorithm)).thenReturn(Optional.empty());
+
+        HashService hashService = new FilesystemDigestHashService(algorithm, hashStore);
+        hashService.getChecksum(box);
+
+        Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
         Mockito.verify(hashStore, Mockito.times(1)).persist(box, hash, algorithm);
+    }
+
+    @Test
+    public void givenHashService_whenLiveHashCalculationIsTurnOffAndLoadHashReturnsHash_thenHashStoreLoadIsCalled() {
+        final String box = "box";
+        final String hash = "hash";
+        final HashAlgorithm algorithm = MD5;
+
+        AppProperties properties = new AppProperties();
+        properties.setChecksum(algorithm);
+
+        HashStore hashStore = Mockito.mock(HashStore.class);
+        Mockito.when(hashStore.loadHash(box, algorithm)).thenReturn(Optional.of(hash));
+
+        HashService hashService = new FilesystemDigestHashService(algorithm, hashStore);
+        String loadedHash = hashService.getChecksum(box, false);
+        assertEquals(loadedHash, hash);
+
+        Mockito.verify(hashStore, Mockito.times(1)).loadHash(box, algorithm);
     }
 }

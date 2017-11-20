@@ -28,9 +28,9 @@ public class FilesystemDigestHashService implements HashService {
     private final HashAlgorithm hashAlgorithm;
 
     /**
-     * @param hashAlgorithm      algorithm used to calculate hashes
-     * @param streamBufferLength buffer used when calculating hashes
-     * @param hashStore          store used to persist already calculated hashes
+     * @param hashAlgorithm       algorithm used to calculate hashes
+     * @param streamBufferLength  buffer used when calculating hashes
+     * @param hashStore           store used to persist already calculated hashes
      */
     public FilesystemDigestHashService(HashAlgorithm hashAlgorithm, int streamBufferLength, HashStore hashStore) {
         this.hashAlgorithm = hashAlgorithm;
@@ -74,8 +74,22 @@ public class FilesystemDigestHashService implements HashService {
 
     @Override
     public String getChecksum(String box) {
-        final String hash = hashStore.loadHash(box, hashAlgorithm)
-                .orElseGet(() -> calculateHash(box));
+        return hashStore.loadHash(box, hashAlgorithm)
+                .orElseGet(() -> calculateHashAndStore(box));
+    }
+
+    @Override
+    public String getChecksum(String box, boolean canCalculate) {
+        if (canCalculate) {
+            return getChecksum(box);
+        }
+
+        return hashStore.loadHash(box, hashAlgorithm)
+                .orElse(null);
+    }
+
+    private String calculateHashAndStore(String box) {
+        final String hash = calculateHash(box);
         hashStore.persist(box, hash, hashAlgorithm);
         return hash;
     }
