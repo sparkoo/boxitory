@@ -1,8 +1,11 @@
 package cz.sparko.boxitory.model;
 
-import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CalculatedChecksumCounter {
+    private static final Logger LOG = LoggerFactory.getLogger(CalculatedChecksumCounter.class);
+
     private final int maxCalculatedChecksum;
     private int alreadyEnsuredChecksum;
 
@@ -13,6 +16,7 @@ public class CalculatedChecksumCounter {
 
     public void increment() {
         alreadyEnsuredChecksum++;
+        LOG.trace("Calculated checksum for {}/{} boxes.", alreadyEnsuredChecksum, maxCalculatedChecksum);
     }
 
     public boolean isLimitOfCalculatedChecksumExceeded() {
@@ -25,19 +29,5 @@ public class CalculatedChecksumCounter {
                 "maxCalculatedChecksum=" + maxCalculatedChecksum +
                 ", alreadyEnsuredChecksum=" + alreadyEnsuredChecksum +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CalculatedChecksumCounter that = (CalculatedChecksumCounter) o;
-        return maxCalculatedChecksum == that.maxCalculatedChecksum &&
-                alreadyEnsuredChecksum == that.alreadyEnsuredChecksum;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(maxCalculatedChecksum, alreadyEnsuredChecksum);
     }
 }
