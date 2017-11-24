@@ -77,6 +77,9 @@ public class FilesystemBoxRepositoryTest {
         new File(f26.getAbsolutePath() + File.separator + "f26_3_virtualbox.box").createNewFile();
 
         new File(f27.getAbsolutePath() + File.separator + "wrongFileFormat.box").createNewFile();
+        new File(f27.getAbsolutePath() + File.separator + "f27_3_virtualbox.boxf").createNewFile();
+        new File(f27.getAbsolutePath() + File.separator + "f27_3_virtualbox").createNewFile();
+        new File(f27.getAbsolutePath() + File.separator + "f27_3_virtualbox.bo").createNewFile();
 
         new File(f28.getAbsolutePath() + File.separator + "f28_1_virtualbox.box").createNewFile();
         new File(f28.getAbsolutePath() + File.separator + "f28_1_vmware.box").createNewFile();

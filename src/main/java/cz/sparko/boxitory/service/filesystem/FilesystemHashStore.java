@@ -41,7 +41,7 @@ public class FilesystemHashStore implements HashStore {
         if (algorithm == DISABLED) {
             LOG.error("No hash algorithm [{}]. Nothing to persist.", algorithm);
             throw new IllegalStateException("Trying to persist hash with [" + DISABLED + "] algorithm set. " +
-                    "This is not a valid state.");
+                                                    "This is not a valid state.");
         }
 
         try {
@@ -83,8 +83,10 @@ public class FilesystemHashStore implements HashStore {
         if (boxHashFile.exists() && boxHashFile.isFile()) {
             LOG.trace("Found hash file [{}] for box version [{}]", boxHashFile.getAbsolutePath(), box);
             try {
-                hash = Optional.of(ChecksumFileHandler.readHashFromChecksumFile(boxHashFile));
-                LOG.debug("Hash [{}] loaded from file [{}] for box [{}]", hash, boxHashFile.getAbsolutePath(), box);
+                String loadedHash = ChecksumFileHandler.readHashFromChecksumFile(boxHashFile);
+                hash = Optional.of(loadedHash);
+                LOG.debug("Hash [{}] loaded from file [{}] for box [{}]",
+                          loadedHash, boxHashFile.getAbsolutePath(), box);
             } catch (IllegalStateException ise) {
                 LOG.error("Checksum file [{}] has probably wrong format.", boxHashFile, ise);
                 return Optional.empty();

@@ -21,6 +21,8 @@ import static cz.sparko.boxitory.domain.BoxVersion.VERSION_COMPARATOR;
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
 
+    private static final String BOX_FILENAME_REGEX = "_(\\d+)_(\\w+)\\.box";
+
     private final String hostPrefix;
     private final File boxHome;
     private final HashService hashService;
@@ -84,7 +86,6 @@ public class FilesystemBoxRepository implements BoxRepository {
                 .orElse(new File[0]);
         return Arrays.stream(boxFiles)
                 .filter(File::isFile)
-                .filter(f -> f.getName().endsWith(".box"))
                 .filter(this::validateFilename)
                 .collect(Collectors.groupingBy(
                         this::getBoxVersionFromFileName
@@ -92,14 +93,29 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private boolean validateFilename(File boxFile) {
-        String filename = boxFile.getName();
-        File parentDir = boxFile.getParentFile();
+        String boxFilename = boxFile.getName();
+        String boxParentDirname = boxFile.getParentFile().getName();
 
-        if (!filename.matches(parentDir.getName() + "_(\\d+)_(\\w+)\\.box")) {
-            LOG.warn("box file [{}] has wrong name. must be in format ${name}_${version}_${provider}.box", filename);
+        if (!boxFilename.matches(boxParentDirname + BOX_FILENAME_REGEX)) {
+            if (!isValidOtherFile(boxFilename, boxParentDirname)) {
+                LOG.warn("box file [{}] has wrong name. must be in format ${name}_${version}_${provider}.box",
+                         boxFilename);
+            }
             return false;
         }
         return true;
+    }
+
+    private boolean isValidOtherFile(String filename, String parentDirname) {
+        for (HashService.HashAlgorithm hashAlgorithm : HashService.HashAlgorithm.CHECKSUMS) {
+            if (filename.matches(parentDirname + BOX_FILENAME_REGEX + hashAlgorithm.getFileExtension())) {
+                return true;
+            }
+        }
+        if (FilesystemDescriptionProvider.DESCRIPTIONS_FILE.equals(filename)) {
+            return true;
+        }
+        return false;
     }
 
     private String getBoxVersionFromFileName(File file) {
@@ -125,12 +141,13 @@ public class FilesystemBoxRepository implements BoxRepository {
     private BoxVersion createBoxVersion(String version, List<File> fileList,
                                         String boxName, CalculatedChecksumCounter checksumCounter) {
         checksumCounter.increment();
-        BoxVersion boxVersion = new BoxVersion(
+        return new BoxVersion(
                 version,
                 descriptionProvider.getDescription(boxName, version).orElse(null),
-                fileList.stream().map((file) -> createBoxProviderFromFile(file, checksumCounter)).collect(Collectors.toList())
+                fileList.stream()
+                        .map((file) -> createBoxProviderFromFile(file, checksumCounter))
+                        .collect(Collectors.toList())
         );
-        return  boxVersion;
     }
 
     private BoxProvider createBoxProviderFromFile(File file, CalculatedChecksumCounter checksumCounter) {
@@ -153,7 +170,11 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     private boolean containsValidBoxFile(File file) {
-        File[] files = file.listFiles(this::validateFilename);
-        return files != null && files.length > 0;
+        for (File potentialBoxFile : Objects.requireNonNull(file.listFiles())) {
+            if (this.validateFilename(potentialBoxFile)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
