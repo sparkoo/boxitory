@@ -112,10 +112,7 @@ public class FilesystemBoxRepository implements BoxRepository {
                 return true;
             }
         }
-        if (FilesystemDescriptionProvider.DESCRIPTIONS_FILE.equals(filename)) {
-            return true;
-        }
-        return false;
+        return FilesystemDescriptionProvider.DESCRIPTIONS_FILE.equals(filename);
     }
 
     private String getBoxVersionFromFileName(File file) {
