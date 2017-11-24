@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--suppress XmlUnboundNsPrefix, XmlUnboundNsPrefix -->
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
-    <!--<property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>-->
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-    <!--<include resource="org/springframework/boot/logging/logback/file-appender.xml" />-->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <!--<appender-ref ref="FILE" />-->
+    <property name="LOG_FILE" value="./logs/boxitory.log"/>
+
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </root>
 
     <logger name="cz.sparko.boxitory" level="debug" additivity="false">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </logger>
 </configuration>
