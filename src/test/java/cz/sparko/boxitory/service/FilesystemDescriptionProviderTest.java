@@ -34,7 +34,10 @@ public class FilesystemDescriptionProviderTest {
         testAppProperties.setHost_prefix(TEST_BOX_PREFIX);
         testHomeDir = new File(TEST_HOME);
 
-        descriptionProvider = new FilesystemDescriptionProvider(testHomeDir);
+        descriptionProvider = new FilesystemDescriptionProvider(
+                testHomeDir,
+                testAppProperties.getVersion_as_timestamp()
+        );
     }
 
     @BeforeMethod

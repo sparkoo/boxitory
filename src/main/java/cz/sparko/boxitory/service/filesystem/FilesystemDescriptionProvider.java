@@ -7,8 +7,12 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * This implementation of {@link DescriptionProvider} uses filesystem as storage. Descriptions must be stored in file
@@ -22,13 +26,15 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
     private static final String SEPARATOR = ";;;";
 
     private final File boxHome;
+    private final boolean versionAsTimestamp;
 
-    public FilesystemDescriptionProvider(File boxHome) {
+    public FilesystemDescriptionProvider(File boxHome, boolean versionAsTimestamp) {
         this.boxHome = boxHome;
+        this.versionAsTimestamp = versionAsTimestamp;
     }
 
-    public FilesystemDescriptionProvider(String boxHome) {
-        this.boxHome = new File(boxHome);
+    public FilesystemDescriptionProvider(String boxHome, boolean versionAsTimestamp) {
+        this(new File(boxHome), versionAsTimestamp);
     }
 
     /**
@@ -83,6 +89,14 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
         if (splittedLine.length != 2) {
             return null;
         }
+
+        if (versionAsTimestamp) {
+            splittedLine[1] = Stream.of(
+                    new Date(Long.valueOf(splittedLine[0])).toInstant().toString(),
+                    splittedLine[1]
+            ).filter(s -> s != null && !s.isEmpty()).collect(joining("-"));
+        }
+
         return new DescriptionLine(splittedLine[0], splittedLine[1]);
     }
 

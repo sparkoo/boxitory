@@ -15,6 +15,7 @@ public class AppProperties {
     private boolean checksum_persist = true;
     private int checksum_buffer_size = 1024;
     private int checksum_ensure = 1;
+    private boolean version_as_timestamp = false;
 
     public String getHome() {
         return home;
@@ -40,6 +41,8 @@ public class AppProperties {
 
     public int getChecksum_ensure() { return checksum_ensure; }
 
+    public boolean getVersion_as_timestamp() { return version_as_timestamp; }
+
     public void setSort_desc(boolean sort_desc) {
         this.sort_desc = sort_desc;
     }
@@ -56,13 +59,13 @@ public class AppProperties {
         this.checksum = checksum;
     }
 
-    public void setChecksum_buffer_size(int checksum_buffer_size) {
-        this.checksum_buffer_size = checksum_buffer_size;
-    }
+    public void setChecksum_buffer_size(int checksum_buffer_size) { this.checksum_buffer_size = checksum_buffer_size; }
 
     public void setChecksum_persist(boolean checksum_persist) {
         this.checksum_persist = checksum_persist;
     }
 
     public void setChecksum_ensure(int checksum_ensure) { this.checksum_ensure = checksum_ensure; }
+
+    public void setVersion_as_timestamp(boolean version_as_timestamp) { this.version_as_timestamp = version_as_timestamp; }
 }

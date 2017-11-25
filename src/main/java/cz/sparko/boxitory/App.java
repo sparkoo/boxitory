@@ -33,7 +33,7 @@ public class App {
     @Bean
     @Autowired
     public DescriptionProvider descriptionProvider(AppProperties appProperties) {
-        return new FilesystemDescriptionProvider(appProperties.getHome());
+        return new FilesystemDescriptionProvider(appProperties.getHome(), appProperties.getVersion_as_timestamp());
     }
 
     @Bean
