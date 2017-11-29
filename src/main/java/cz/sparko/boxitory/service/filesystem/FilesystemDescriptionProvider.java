@@ -51,10 +51,17 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
         validateArgs(boxName, version);
 
         File descriptionFile = new File(boxHome, File.separator + boxName + File.separator + DESCRIPTIONS_FILE);
+        Optional<String> descriptionNotFoundResult = Optional.empty();
+
+        if (versionAsTimestamp) {
+            descriptionNotFoundResult = Optional.of(getDateFromTimestamp(version));
+        }
+
         if (!descriptionFile.exists()) {
             LOG.trace("Descriptions file [{}] does not exist.", DESCRIPTIONS_FILE);
-            return Optional.empty();
+            return descriptionNotFoundResult;
         }
+
         try {
             Optional<DescriptionLine> foundDescription = Files.readAllLines(descriptionFile.toPath()).stream()
                     .map(this::parseLine)
@@ -71,8 +78,9 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
             LOG.error("Error when parsing description file. Please check whether [{}] is in valid format.",
                     DESCRIPTIONS_FILE, e);
         }
+
         LOG.debug("No description found for box [{}] version [{}]", boxName, version);
-        return Optional.empty();
+        return descriptionNotFoundResult;
     }
 
     private void validateArgs(String boxName, String version) {
@@ -92,12 +100,16 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
 
         if (versionAsTimestamp) {
             splittedLine[1] = Stream.of(
-                    new Date(Long.valueOf(splittedLine[0])).toInstant().toString(),
+                    getDateFromTimestamp(splittedLine[0]),
                     splittedLine[1]
             ).filter(s -> s != null && !s.isEmpty()).collect(joining("-"));
         }
 
         return new DescriptionLine(splittedLine[0], splittedLine[1]);
+    }
+
+    private String getDateFromTimestamp(String timestamp) {
+        return new Date(Long.valueOf(timestamp)).toInstant().toString();
     }
 
     private static class DescriptionLine {
