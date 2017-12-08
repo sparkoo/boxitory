@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -109,7 +109,7 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
     }
 
     private String getDateFromTimestamp(String timestamp) {
-        return new Date(Long.valueOf(timestamp)).toInstant().toString();
+        return Instant.ofEpochSecond(Long.valueOf(timestamp)).toString();
     }
 
     private static class DescriptionLine {
