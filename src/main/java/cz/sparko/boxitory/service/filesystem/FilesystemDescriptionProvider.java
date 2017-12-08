@@ -24,6 +24,7 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
 
     public static final String DESCRIPTIONS_FILE = "descriptions.csv";
     private static final String SEPARATOR = ";;;";
+    private static final String DESCRIPTION_TIMESTAMPT_SEPARATOR = "-";
 
     private final File boxHome;
     private final boolean versionAsTimestamp;
@@ -102,7 +103,8 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
             splittedLine[1] = Stream.of(
                     getDateFromTimestamp(splittedLine[0]),
                     splittedLine[1]
-            ).filter(s -> s != null && !s.isEmpty()).collect(joining("-"));
+            ).filter(s -> s != null && !s.isEmpty())
+                    .collect(joining(DESCRIPTION_TIMESTAMPT_SEPARATOR));
         }
 
         return new DescriptionLine(splittedLine[0], splittedLine[1]);

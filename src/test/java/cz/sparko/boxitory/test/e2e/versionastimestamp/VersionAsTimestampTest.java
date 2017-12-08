@@ -61,7 +61,7 @@ public class VersionAsTimestampTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void givenValidRepoWithDescriptionFile_whenBoxWithTimestampAsVersion_thenDescriptionContainsDateInISO8601AndDescriptionFromFile() throws Exception {
+    public void givenValidRepo_whenBoxWithTimestampAsVersionHasRecordInDescriptionFile_thenDescriptionContainsDateInISO8601AndDescriptionFromFile() throws Exception {
         mockMvc.perform(get("/" + VM2))
                 .andDo(print())
                 .andExpect(status().isOk())
