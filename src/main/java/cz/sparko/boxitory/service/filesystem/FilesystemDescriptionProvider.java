@@ -72,6 +72,9 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
 
             if (foundDescription.isPresent()) {
                 String description = foundDescription.get().description;
+                if (versionAsTimestamp) {
+                    description = getDescriptionWithTimestamp(foundDescription.get());
+                }
                 LOG.debug("Description [{}] found for box [{}] version [{}]", description, boxName, version);
                 return Optional.of(description);
             }
@@ -99,19 +102,7 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
             return null;
         }
 
-        if (versionAsTimestamp) {
-            splittedLine[1] = Stream.of(
-                    getDateFromTimestamp(splittedLine[0]),
-                    splittedLine[1]
-            ).filter(s -> s != null && !s.isEmpty())
-                    .collect(joining(DESCRIPTION_TIMESTAMPT_SEPARATOR));
-        }
-
         return new DescriptionLine(splittedLine[0], splittedLine[1]);
-    }
-
-    private String getDateFromTimestamp(String timestamp) {
-        return Instant.ofEpochSecond(Long.valueOf(timestamp)).toString();
     }
 
     private static class DescriptionLine {
@@ -122,5 +113,17 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
             this.version = version;
             this.description = description;
         }
+    }
+    
+    private String getDescriptionWithTimestamp(DescriptionLine descriptionLine) {
+        return Stream.of(
+                getDateFromTimestamp(descriptionLine.version),
+                descriptionLine.description
+        ).filter(s -> s != null && !s.isEmpty())
+                .collect(joining(DESCRIPTION_TIMESTAMPT_SEPARATOR));
+    }
+
+    private String getDateFromTimestamp(String timestamp) {
+        return Instant.ofEpochSecond(Long.valueOf(timestamp)).toString();
     }
 }
