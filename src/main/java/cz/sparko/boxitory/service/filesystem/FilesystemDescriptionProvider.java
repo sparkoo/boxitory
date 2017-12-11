@@ -7,8 +7,12 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * This implementation of {@link DescriptionProvider} uses filesystem as storage. Descriptions must be stored in file
@@ -20,15 +24,18 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
 
     public static final String DESCRIPTIONS_FILE = "descriptions.csv";
     private static final String SEPARATOR = ";;;";
+    private static final String DESCRIPTION_TIMESTAMPT_SEPARATOR = "-";
 
     private final File boxHome;
+    private final boolean versionAsTimestamp;
 
-    public FilesystemDescriptionProvider(File boxHome) {
+    public FilesystemDescriptionProvider(File boxHome, boolean versionAsTimestamp) {
         this.boxHome = boxHome;
+        this.versionAsTimestamp = versionAsTimestamp;
     }
 
-    public FilesystemDescriptionProvider(String boxHome) {
-        this.boxHome = new File(boxHome);
+    public FilesystemDescriptionProvider(String boxHome, boolean versionAsTimestamp) {
+        this(new File(boxHome), versionAsTimestamp);
     }
 
     /**
@@ -45,10 +52,17 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
         validateArgs(boxName, version);
 
         File descriptionFile = new File(boxHome, File.separator + boxName + File.separator + DESCRIPTIONS_FILE);
+        Optional<String> descriptionNotFoundResult = Optional.empty();
+
+        if (versionAsTimestamp) {
+            descriptionNotFoundResult = Optional.of(getDateFromTimestamp(version));
+        }
+
         if (!descriptionFile.exists()) {
             LOG.trace("Descriptions file [{}] does not exist.", DESCRIPTIONS_FILE);
-            return Optional.empty();
+            return descriptionNotFoundResult;
         }
+
         try {
             Optional<DescriptionLine> foundDescription = Files.readAllLines(descriptionFile.toPath()).stream()
                     .map(this::parseLine)
@@ -58,6 +72,9 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
 
             if (foundDescription.isPresent()) {
                 String description = foundDescription.get().description;
+                if (versionAsTimestamp) {
+                    description = getDescriptionWithTimestamp(foundDescription.get());
+                }
                 LOG.debug("Description [{}] found for box [{}] version [{}]", description, boxName, version);
                 return Optional.of(description);
             }
@@ -65,8 +82,9 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
             LOG.error("Error when parsing description file. Please check whether [{}] is in valid format.",
                     DESCRIPTIONS_FILE, e);
         }
+
         LOG.debug("No description found for box [{}] version [{}]", boxName, version);
-        return Optional.empty();
+        return descriptionNotFoundResult;
     }
 
     private void validateArgs(String boxName, String version) {
@@ -83,6 +101,7 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
         if (splittedLine.length != 2) {
             return null;
         }
+
         return new DescriptionLine(splittedLine[0], splittedLine[1]);
     }
 
@@ -94,5 +113,17 @@ public class FilesystemDescriptionProvider implements DescriptionProvider {
             this.version = version;
             this.description = description;
         }
+    }
+    
+    private String getDescriptionWithTimestamp(DescriptionLine descriptionLine) {
+        return Stream.of(
+                getDateFromTimestamp(descriptionLine.version),
+                descriptionLine.description
+        ).filter(s -> s != null && !s.isEmpty())
+                .collect(joining(DESCRIPTION_TIMESTAMPT_SEPARATOR));
+    }
+
+    private String getDateFromTimestamp(String timestamp) {
+        return Instant.ofEpochSecond(Long.valueOf(timestamp)).toString();
     }
 }

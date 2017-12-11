@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 
 import static cz.sparko.boxitory.service.filesystem.FilesystemDescriptionProvider.DESCRIPTIONS_FILE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -34,7 +35,10 @@ public class FilesystemDescriptionProviderTest {
         testAppProperties.setHost_prefix(TEST_BOX_PREFIX);
         testHomeDir = new File(TEST_HOME);
 
-        descriptionProvider = new FilesystemDescriptionProvider(testHomeDir);
+        descriptionProvider = new FilesystemDescriptionProvider(
+                testHomeDir,
+                testAppProperties.getVersion_as_timestamp()
+        );
     }
 
     @BeforeMethod
@@ -136,6 +140,26 @@ public class FilesystemDescriptionProviderTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void givenEmptyVersion_whenGet_thenThrowIae() {
         descriptionProvider.getDescription("1", "");
+    }
+
+    @Test
+    public void givenValidDescriptionFileAndVersionAsTimestamp_whenGet_thenDescriptionContainsDateInISO8601AndDescription() throws IOException {
+        FilesystemDescriptionProvider descriptionProviderWithTimestamp = new FilesystemDescriptionProvider(
+                testHomeDir,
+                true
+        );
+        createDirWithValidDescriptions();
+        File f25 = new File(testHomeDir.getAbsolutePath() + "/f25");
+        File descriptionFile = new File(f25.getAbsolutePath() + "/" + DESCRIPTIONS_FILE);
+        long versionAsTimestamp = Instant.parse("2017-01-01T00:00:00.00Z").getEpochSecond();
+        writeStringToFile(
+                descriptionFile,
+                versionAsTimestamp + ";;;DescriptionWithTimestamp\n", UTF_8,
+                true
+        );
+
+        String expectedDescription = "2017-01-01T00:00:00Z-DescriptionWithTimestamp";
+        assertEquals(descriptionProviderWithTimestamp.getDescription("f25", String.valueOf(versionAsTimestamp)).get(), expectedDescription);
     }
 
     private void createDirWithValidDescriptions() throws IOException {
