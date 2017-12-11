@@ -8,3 +8,4 @@ box.checksum=md5
 box.checksum_buffer_size=1024
 box.checksum_persist=true
 box.checksum_ensure=1
+box.version_as_timestamp=false

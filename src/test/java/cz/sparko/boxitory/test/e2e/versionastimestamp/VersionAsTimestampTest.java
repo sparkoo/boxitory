@@ -32,7 +32,7 @@ public class VersionAsTimestampTest extends AbstractIntegrationTest {
     private final String VM_2_BOX = VM2 + "_"  + VM2_TEST_TIMESTAMP.getEpochSecond() + "_vmware.box";
 
     private final String EXPECTED_VM1BOX_DESCRIPTION = "2017-10-10T12:00:00Z";
-    private final String EXPECTED_VM2BOX_DESCRIPTION = "2017-10-10T10:00:00Z-Some useful description";
+    private final String EXPECTED_VM2BOX_DESCRIPTION = "2017-10-10T10:00:00Z - Some useful description";
 
     @Override
     public void createFolderStructure() throws IOException {

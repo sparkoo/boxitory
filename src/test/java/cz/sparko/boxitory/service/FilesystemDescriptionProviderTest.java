@@ -158,7 +158,7 @@ public class FilesystemDescriptionProviderTest {
                 true
         );
 
-        String expectedDescription = "2017-01-01T00:00:00Z-DescriptionWithTimestamp";
+        String expectedDescription = "2017-01-01T00:00:00Z - DescriptionWithTimestamp";
         assertEquals(descriptionProviderWithTimestamp.getDescription("f25", String.valueOf(versionAsTimestamp)).get(), expectedDescription);
     }
 
