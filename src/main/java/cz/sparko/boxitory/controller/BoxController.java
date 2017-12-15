@@ -6,7 +6,6 @@ import cz.sparko.boxitory.domain.BoxVersion;
 import cz.sparko.boxitory.service.BoxRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,7 +22,6 @@ public class BoxController {
 
     private final BoxRepository boxRepository;
 
-    @Autowired
     public BoxController(BoxRepository boxRepository) {
         this.boxRepository = boxRepository;
     }

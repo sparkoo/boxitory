@@ -10,7 +10,6 @@ import cz.sparko.boxitory.service.filesystem.FilesystemBoxRepository;
 import cz.sparko.boxitory.service.filesystem.FilesystemDescriptionProvider;
 import cz.sparko.boxitory.service.filesystem.FilesystemHashStore;
 import cz.sparko.boxitory.service.noop.NoopHashStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +22,6 @@ public class App {
     }
 
     @Bean
-    @Autowired
     public BoxRepository boxRepository(AppProperties appProperties,
                                        HashService hashService,
                                        DescriptionProvider descriptionProvider) {
@@ -31,19 +29,16 @@ public class App {
     }
 
     @Bean
-    @Autowired
     public DescriptionProvider descriptionProvider(AppProperties appProperties) {
         return new FilesystemDescriptionProvider(appProperties.getHome(), appProperties.getVersion_as_timestamp());
     }
 
     @Bean
-    @Autowired
     public HashService hashService(AppProperties appProperties, HashStore hashStore) {
         return HashServiceFactory.createHashService(appProperties, hashStore);
     }
 
     @Bean
-    @Autowired
     public HashStore hashStore(AppProperties appProperties) {
         if (appProperties.isChecksum_persist()) {
             return new FilesystemHashStore();
