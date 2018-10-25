@@ -16,9 +16,16 @@ public interface BoxRepository {
 
     /**
      * Returns {@link List} of names of available {@link Box}es. Call {@link BoxRepository#getBox(String)} with any of
-     * returned name should get valid result.
+     * returned name should get full {@link Box} instance.
      *
      * @return names of available {@link Box}es
      */
-    List<String> getBoxes();
+    List<String> getBoxNames();
+
+    /**
+     * Finds all available and valid boxes and provides full {@link Box} instances of them.
+     *
+     * @return list of available {@link Box}es
+     */
+    List<Box> getBoxes();
 }
