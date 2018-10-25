@@ -6,7 +6,9 @@
 <body>
 <h2>Available boxes</h2>
 <ul th:each="box : ${boxes}">
-    <li><a th:href="${box}" th:text="${box}"></a></li>
+    <li>
+        <a th:href="${box.getName()}" th:text="${box.getName()}"></a>
+    </li>
 </ul>
 </body>
 </html>
