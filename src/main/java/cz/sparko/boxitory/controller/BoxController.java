@@ -38,7 +38,7 @@ public class BoxController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Model model) {
         LOG.info("providing box list page ...");
-        model.addAttribute("boxes", boxRepository.getBoxes());
+        model.addAttribute("boxes", boxRepository.getBoxNames());
         return "index";
     }
 

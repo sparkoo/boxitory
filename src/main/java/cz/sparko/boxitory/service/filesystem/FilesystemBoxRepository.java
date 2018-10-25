@@ -43,7 +43,7 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     @Override
-    public List<String> getBoxes() {
+    public List<String> getBoxNames() {
         return listPotentialBoxDirs()
                 .filter(this::containsValidBoxFile)
                 .map(File::getName)
@@ -65,6 +65,15 @@ public class FilesystemBoxRepository implements BoxRepository {
             LOG.debug("[{}] box versions found for [{}]", boxVersions.size(), boxName);
             return Optional.of(new Box(boxName, boxName, boxVersions));
         }
+    }
+
+    @Override
+    public List<Box> getBoxes() {
+        return getBoxNames().stream()
+                .map(this::getBox)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     private Optional<File> getBoxDir(String boxName) {

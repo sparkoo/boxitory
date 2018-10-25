@@ -17,9 +17,12 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.testng.Assert.assertEquals;
@@ -35,6 +38,8 @@ public class FilesystemBoxRepositoryTest {
     private File testHomeDir;
 
     private AppProperties testAppProperties;
+
+    Map<String, Box> testBoxes;
 
     @BeforeClass
     public void setUp() throws IOException {
@@ -88,60 +93,78 @@ public class FilesystemBoxRepositoryTest {
         new File(f29.getAbsolutePath() + File.separator + "f29_1_virtualbox.box").createNewFile();
         new File(f29.getAbsolutePath() + File.separator + "f29_3_virtualbox.box").createNewFile();
         new File(f29.getAbsolutePath() + File.separator + "f29_2_virtualbox.box").createNewFile();
+
+        testBoxes = new HashMap<>();
+        testBoxes.put("f25", new Box("f25", "f25",
+                                     Arrays.asList(
+                                             new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f25", "1", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             )),
+                                             new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f25", "2", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             ))
+                                     )));
+        testBoxes.put("f26", new Box("f26", "f26",
+                                     Arrays.asList(
+                                             new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f26", "1", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             )),
+                                             new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f26", "2", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             )),
+                                             new BoxVersion("3", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f26", "3", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             ))
+                                     )));
+        testBoxes.put("f28", new Box("f28", "f28",
+                                     Arrays.asList(
+                                             new BoxVersion("1", VERSION_DESCRIPTION, Arrays.asList(
+                                                     new BoxProvider(composePath("f28", "1", "virtualbox"),
+                                                                     "virtualbox", null, null),
+                                                     new BoxProvider(composePath("f28", "1", "vmware"),
+                                                                     "vmware", null, null)
+                                             )),
+                                             new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f28", "2", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             ))
+                                     )));
+        testBoxes.put("f29", new Box("f29", "f29",
+                                     Arrays.asList(
+                                             new BoxVersion("1", VERSION_DESCRIPTION, Arrays.asList(
+                                                     new BoxProvider(composePath("f29", "1", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             )),
+                                             new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f29", "2", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             )),
+                                             new BoxVersion("3", VERSION_DESCRIPTION, Collections.singletonList(
+                                                     new BoxProvider(composePath("f29", "3", "virtualbox"),
+                                                                     "virtualbox", null, null)
+                                             ))
+                                     )));
     }
 
     @DataProvider
-    public Object[][] boxes() {
+    public Object[][] boxesMap() {
         return new Object[][]{
-                {"f25", Optional.of(new Box("f25", "f25",
-                        Arrays.asList(
-                                new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
-                                        new BoxProvider(composePath("f25", "1", "virtualbox"),
-                                                "virtualbox", null, null)
-                                )),
-                                new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                        new BoxProvider(composePath("f25", "2", "virtualbox"),
-                                                "virtualbox", null, null)
-                                ))
-                        )))
-                },
-                {"f26", Optional.of(new Box("f26", "f26",
-                        Arrays.asList(
-                                new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
-                                        new BoxProvider(composePath("f26", "1", "virtualbox"),
-                                                "virtualbox", null, null)
-                                )),
-                                new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                        new BoxProvider(composePath("f26", "2", "virtualbox"),
-                                                "virtualbox", null, null)
-                                )),
-                                new BoxVersion("3", VERSION_DESCRIPTION, Collections.singletonList(
-                                        new BoxProvider(composePath("f26", "3", "virtualbox"),
-                                                "virtualbox", null, null)
-                                ))
-                        )))
-                },
+                {"f25", Optional.of(testBoxes.get("f25"))},
+                {"f26", Optional.of(testBoxes.get("f26"))},
                 {"f27", Optional.empty()},
-                {"f28", Optional.of(new Box("f28", "f28",
-                        Arrays.asList(
-                                new BoxVersion("1", VERSION_DESCRIPTION, Arrays.asList(
-                                        new BoxProvider(composePath("f28", "1", "virtualbox"),
-                                                "virtualbox", null, null),
-                                        new BoxProvider(composePath("f28", "1", "vmware"),
-                                                "vmware", null, null)
-                                )),
-                                new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                        new BoxProvider(composePath("f28", "2", "virtualbox"),
-                                                "virtualbox", null, null)
-                                ))
-                        )))
-                },
+                {"f28", Optional.of(testBoxes.get("f28"))},
+                {"f29", Optional.of(testBoxes.get("f29"))},
                 {"blabol", Optional.empty()},
                 {"wrongBoxFileFormat", Optional.empty()}
         };
     }
 
-    @Test(dataProvider = "boxes")
+    @Test(dataProvider = "boxesMap")
     public void givenRepository_whenGetBox_thenGetWhenFound(String boxName, Optional<Box> expectedResult) {
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
@@ -185,25 +208,25 @@ public class FilesystemBoxRepositoryTest {
     }
 
     @Test
-    public void givenValidRepositoryWithBoxes_whenGetBoxes_thenGetValidBoxes() {
+    public void givenValidRepositoryWithBoxes_whenGetBoxNames_thenGetValidBoxes() {
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
                 new NoopDescriptionProvider()
         );
 
-        List<String> boxes = boxRepository.getBoxes();
+        List<String> boxes = boxRepository.getBoxNames();
         assertTrue(boxes.containsAll(Arrays.asList("f25", "f26", "f28", "f29")));
-        assertFalse(boxes.containsAll(Collections.singletonList("f27")));
+        assertFalse(boxes.contains("f27"));
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
-    public void givenNonExistingRepositoryDir_whenGetBoxes_thenThrowNotFoundException() {
+    public void givenNonExistingRepositoryDir_whenGetBoxNames_thenThrowNotFoundException() {
         testAppProperties.setHome("/some/not/existing/dir");
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
                 new NoopDescriptionProvider()
         );
-        boxRepository.getBoxes();
+        boxRepository.getBoxNames();
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -216,10 +239,23 @@ public class FilesystemBoxRepositoryTest {
         boxRepository.getBox("invalid_repo_dir");
     }
 
+    @Test
+    public void givenValidRepositoryWithBoxes_whenGetBoxes_thenGetValidListOfBoxes() {
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(),
+                new NoopDescriptionProvider()
+        );
+
+        List<Box> boxes = boxRepository.getBoxes();
+        assertEquals(boxes.size(), testBoxes.size());
+        assertTrue(boxes.containsAll(testBoxes.values()));
+        assertTrue(testBoxes.values().containsAll(testBoxes.values()));
+    }
+
     private String composePath(String boxName, String version, String provider) {
         return String.format("%s%s" + File.separator + "%s" + File.separator + "%s_%s_%s.box",
-                TEST_BOX_PREFIX,
-                testHomeDir.getAbsolutePath(),
-                boxName, boxName, version, provider);
+                             TEST_BOX_PREFIX,
+                             testHomeDir.getAbsolutePath(),
+                             boxName, boxName, version, provider);
     }
 }
