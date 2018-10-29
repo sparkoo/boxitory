@@ -3,6 +3,7 @@ package cz.sparko.boxitory.test.e2e;
 import cz.sparko.boxitory.App;
 import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.controller.BoxController;
+import cz.sparko.boxitory.controller.DownloadController;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,7 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 @ContextConfiguration(classes = App.class)
-@WebMvcTest(controllers = BoxController.class)
+@WebMvcTest(controllers = {BoxController.class, DownloadController.class})
 @AutoConfigureMockMvc(secure = false)
 @TestPropertySource(locations = "classpath:test.properties")
 @Test(groups = "e2e")

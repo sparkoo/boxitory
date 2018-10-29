@@ -1,10 +1,13 @@
 package cz.sparko.boxitory.service.filesystem;
 
 import cz.sparko.boxitory.conf.AppProperties;
+import cz.sparko.boxitory.conf.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
+import cz.sparko.boxitory.model.BoxStream;
 import cz.sparko.boxitory.model.CalculatedChecksumCounter;
+import cz.sparko.boxitory.model.FileBoxStream;
 import cz.sparko.boxitory.service.BoxRepository;
 import cz.sparko.boxitory.service.DescriptionProvider;
 import cz.sparko.boxitory.service.HashService;
@@ -12,7 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +53,7 @@ public class FilesystemBoxRepository implements BoxRepository {
     }
 
     @Override
-    public List<String> getBoxes() {
+    public List<String> getBoxNames() {
         return listPotentialBoxDirs()
                 .filter(this::containsValidBoxFile)
                 .map(File::getName)
@@ -65,6 +75,55 @@ public class FilesystemBoxRepository implements BoxRepository {
             LOG.debug("[{}] box versions found for [{}]", boxVersions.size(), boxName);
             return Optional.of(new Box(boxName, boxName, boxVersions));
         }
+    }
+
+    @Override
+    public List<Box> getBoxes() {
+        return getBoxNames().stream()
+                .map(this::getBox)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<BoxStream> getBoxStream(String boxName, String boxProvider, String boxVersion) {
+        Box box = getBox(boxName).orElseThrow(() -> NotFoundException.boxNotFound(boxName));
+        BoxVersion version = getBoxVersion(box, boxVersion);
+        BoxProvider provider = getBoxVersionProvider(version, boxProvider);
+
+        File boxFile = new File(provider.getLocalUrl());
+        if (boxFile.exists() && boxFile.isFile()) {
+            return Optional.of(new FileBoxStream(new File(provider.getLocalUrl())));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public String latestVersionOfBox(String boxName, String boxProvider) {
+        return getBox(boxName)
+                .orElseThrow(() -> NotFoundException.boxNotFound(boxName))
+                .getVersions().stream().sorted(BoxVersion.VERSION_COMPARATOR.reversed())
+                .filter(v -> v.getProviders().stream().anyMatch(p -> p.getName().equals(boxProvider)))
+                .findFirst()
+                .orElseThrow(() -> NotFoundException.boxNotFound(boxName))
+                .getVersion();
+    }
+
+    private BoxVersion getBoxVersion(Box box, String boxVersion) {
+        return box.getVersions().stream()
+                .filter(v -> v.getVersion().equals(boxVersion))
+                .findFirst()
+                .orElseThrow(() -> NotFoundException.boxVersionNotFound(box.getName(), boxVersion));
+    }
+
+    private BoxProvider getBoxVersionProvider(BoxVersion boxVersion, String boxProvider) {
+        return boxVersion.getProviders().stream()
+                .filter(p -> p.getName().equals(boxProvider))
+                .findFirst()
+                .orElseThrow(() -> NotFoundException.boxVersionProviderNotFound(
+                        boxVersion.getDescription(), boxVersion.getVersion(), boxProvider));
     }
 
     private Optional<File> getBoxDir(String boxName) {
@@ -157,6 +216,7 @@ public class FilesystemBoxRepository implements BoxRepository {
         }
         return new BoxProvider(
                 hostPrefix + file.getAbsolutePath(),
+                file.getAbsolutePath(),
                 provider,
                 hashService.getHashType(),
                 hashService.getChecksum(
