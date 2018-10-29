@@ -8,6 +8,11 @@
 <ul th:each="box : ${boxes}">
     <li>
         <a th:href="${box.getName()}" th:text="${box.getName()}"></a>
+        ( download latest:
+        <span th:each="dl : ${box.getProviders()}">
+            <a th:href="@{'/download/' + ${box.name} + '/' + ${dl} + '/latest'}" th:text="${dl}"></a>
+        </span>
+        )
     </li>
 </ul>
 </body>

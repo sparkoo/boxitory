@@ -1,7 +1,10 @@
 package cz.sparko.boxitory.domain;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Full description of Vagrant's box as needed in http API.
@@ -52,5 +55,12 @@ public class Box {
 
     public List<BoxVersion> getVersions() {
         return versions;
+    }
+
+    public List<String> getProviders() {
+        return getVersions().stream()
+                .flatMap(v -> v.getProviders().stream().map(BoxProvider::getName))
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
