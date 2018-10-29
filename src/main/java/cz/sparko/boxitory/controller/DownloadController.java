@@ -6,12 +6,9 @@ import cz.sparko.boxitory.service.BoxRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,16 +49,5 @@ public class DownloadController {
             @PathVariable String boxProvider) throws IOException {
         LOG.info("Downloading latest version of box [{}], provider [{}]", boxName, boxProvider);
         downloadBox(response, boxName, boxProvider, boxRepository.latestVersionOfBox(boxName, boxProvider));
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<String> handleException(Exception e) {
-        final HttpStatus status;
-        if (e instanceof NotFoundException) {
-            status = HttpStatus.NOT_FOUND;
-        } else {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        return new ResponseEntity<>(e.getMessage(), status);
     }
 }
