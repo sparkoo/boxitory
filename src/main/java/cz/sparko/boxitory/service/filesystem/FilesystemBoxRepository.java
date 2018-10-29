@@ -89,12 +89,8 @@ public class FilesystemBoxRepository implements BoxRepository {
     @Override
     public Optional<BoxStream> getBoxStream(String boxName, String boxProvider, String boxVersion) {
         Box box = getBox(boxName).orElseThrow(() -> NotFoundException.boxNotFound(boxName));
-
-        BoxVersion version = getBoxVersion(box, boxVersion)
-                .orElseThrow(() -> NotFoundException.boxVersionNotFound(boxName, boxVersion));
-
-        BoxProvider provider = getBoxVersionProvider(version, boxProvider)
-                .orElseThrow(() -> NotFoundException.boxVersionProviderNotFound(boxName, boxVersion, boxProvider));
+        BoxVersion version = getBoxVersion(box, boxVersion);
+        BoxProvider provider = getBoxVersionProvider(version, boxProvider);
 
         File boxFile = new File(provider.getLocalUrl());
         if (boxFile.exists() && boxFile.isFile()) {
@@ -115,16 +111,19 @@ public class FilesystemBoxRepository implements BoxRepository {
                 .getVersion();
     }
 
-    private Optional<BoxVersion> getBoxVersion(Box box, String boxVersion) {
+    private BoxVersion getBoxVersion(Box box, String boxVersion) {
         return box.getVersions().stream()
                 .filter(v -> v.getVersion().equals(boxVersion))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> NotFoundException.boxVersionNotFound(box.getName(), boxVersion));
     }
 
-    private Optional<BoxProvider> getBoxVersionProvider(BoxVersion version, String boxProvider) {
-        return version.getProviders().stream()
+    private BoxProvider getBoxVersionProvider(BoxVersion boxVersion, String boxProvider) {
+        return boxVersion.getProviders().stream()
                 .filter(p -> p.getName().equals(boxProvider))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> NotFoundException.boxVersionProviderNotFound(
+                        boxVersion.getDescription(), boxVersion.getVersion(), boxProvider));
     }
 
     private Optional<File> getBoxDir(String boxName) {
