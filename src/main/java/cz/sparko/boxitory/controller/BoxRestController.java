@@ -1,6 +1,6 @@
 package cz.sparko.boxitory.controller;
 
-import cz.sparko.boxitory.conf.NotFoundException;
+import cz.sparko.boxitory.exception.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxVersion;
 import cz.sparko.boxitory.service.BoxRepository;

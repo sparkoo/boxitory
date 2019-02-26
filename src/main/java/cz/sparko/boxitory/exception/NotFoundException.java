@@ -1,4 +1,4 @@
-package cz.sparko.boxitory.conf;
+package cz.sparko.boxitory.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;

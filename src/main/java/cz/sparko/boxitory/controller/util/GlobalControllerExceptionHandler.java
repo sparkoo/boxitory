@@ -1,6 +1,6 @@
-package cz.sparko.boxitory.controller;
+package cz.sparko.boxitory.controller.util;
 
-import cz.sparko.boxitory.conf.NotFoundException;
+import cz.sparko.boxitory.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
