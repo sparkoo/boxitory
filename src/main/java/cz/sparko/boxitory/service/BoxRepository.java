@@ -1,6 +1,7 @@
 package cz.sparko.boxitory.service;
 
 import cz.sparko.boxitory.domain.Box;
+import cz.sparko.boxitory.exception.NotFoundException;
 import cz.sparko.boxitory.model.BoxStream;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public interface BoxRepository {
      * @param boxProvider provider of box to find
      * @param boxVersion  version of box to find
      * @return {@link BoxStream} found by given parameters, {@link Optional#empty} when box file not found
-     * @throws cz.sparko.boxitory.conf.NotFoundException when box does not exist or don't have given provider or dont
+     * @throws {@link NotFoundException} when box does not exist or don't have given provider or don't
      * have given version
      */
     Optional<BoxStream> getBoxStream(String boxName, String boxProvider, String boxVersion);
@@ -48,7 +49,7 @@ public interface BoxRepository {
      * @param boxName     name of box to find
      * @param boxProvider provider of box to find
      * @return latest version of box with provider
-     * @throws {@link cz.sparko.boxitory.conf.NotFoundException} when box does not exist of does not have given provider
+     * @throws {@link NotFoundException} when box does not exist of does not have given provider
      */
     String latestVersionOfBox(String boxName, String boxProvider);
 }

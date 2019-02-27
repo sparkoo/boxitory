@@ -1,7 +1,7 @@
 package cz.sparko.boxitory.service.filesystem;
 
 import cz.sparko.boxitory.conf.AppProperties;
-import cz.sparko.boxitory.conf.NotFoundException;
+import cz.sparko.boxitory.exception.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
