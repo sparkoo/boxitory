@@ -38,7 +38,7 @@ public interface BoxRepository {
      * @param boxProvider provider of box to find
      * @param boxVersion  version of box to find
      * @return {@link BoxStream} found by given parameters, {@link Optional#empty} when box file not found
-     * @throws NotFoundException when box does not exist or don't have given provider or dont
+     * @throws {@link NotFoundException} when box does not exist or don't have given provider or don't
      * have given version
      */
     Optional<BoxStream> getBoxStream(String boxName, String boxProvider, String boxVersion);
