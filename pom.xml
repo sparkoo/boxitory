@@ -64,6 +64,8 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <app.port>${server.port}</app.port>
+        <app.boxes.home>${box.home}</app.boxes.home>
     </properties>
 
     <dependencies>
@@ -160,6 +162,24 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>./src/main/resources/application.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.20.0</version>
@@ -187,8 +207,15 @@
                             </build>
                             <run>
                                 <ports>
-                                    <port>8083:8083</port>
+                                    <port>${app.port}:${app.port}</port>
                                 </ports>
+                                <volumes>
+                                    <bind>
+                                        <!-- works for absolute paths provided in box.home property-->
+                                        <!-- needs to be fixed for relative paths-->
+                                        <volume>${app.boxes.home}:${app.boxes.home}</volume>
+                                    </bind>
+                                </volumes>
                             </run>
                         </image>
                     </images>
