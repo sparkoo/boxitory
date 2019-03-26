@@ -182,7 +182,7 @@
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.20.0</version>
+                <version>0.28.0</version>
 
                 <configuration>
 
@@ -213,7 +213,7 @@
                                     <bind>
                                         <!-- works for absolute paths provided in box.home property-->
                                         <!-- needs to be fixed for relative paths-->
-                                        <volume>${app.boxes.home}:${app.boxes.home}</volume>
+                                        <volume>${app.boxes.home}/boxes:/home/boxitory</volume>
                                     </bind>
                                 </volumes>
                             </run>

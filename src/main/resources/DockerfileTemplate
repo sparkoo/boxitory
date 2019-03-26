@@ -1,6 +1,11 @@
 FROM openjdk
 
 VOLUME /tmp
+
 ADD maven/${fileName}.jar ${fileName}.jar
-RUN sh -c 'touch /${fileName}'
+RUN touch /${fileName}
+
+WORKDIR /home/boxitory
+VOLUME /home/boxitory
+
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/${fileName}.jar"]
