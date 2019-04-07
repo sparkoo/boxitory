@@ -18,6 +18,17 @@ $ ./mvnw spring-boot:run
 
 By default, http server will start on port *8083*.
 
+## Docker
+
+```
+$ ./mvnw clean package docker:build docker:start
+```
+or
+```
+$ ./mvnw clean package docker:build docker:run
+```
+
+By default, container expose port *8083* with running app. Files with boxes needs to be stored in ./boxes dir.
 #### Build status (travis-ci)
 
 devel [![Build Status](https://travis-ci.org/sparkoo/boxitory.svg?branch=devel)](https://travis-ci.org/sparkoo/boxitory) 
