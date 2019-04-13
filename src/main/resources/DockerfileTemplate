@@ -1,6 +1,4 @@
-FROM openjdk
-
-VOLUME /tmp
+FROM openjdk:8
 
 ADD maven/${fileName}.jar ${fileName}.jar
 RUN touch /${fileName}
