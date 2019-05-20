@@ -3,6 +3,6 @@ FROM openjdk:8
 ADD maven/${fileName}.jar ${fileName}.jar
 RUN touch /${fileName}
 
-WORKDIR /home/boxitory
+WORKDIR ${workdir}
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/${fileName}.jar"]
