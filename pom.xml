@@ -65,6 +65,9 @@
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <docker-maven-plugin.version>0.28.0</docker-maven-plugin.version>
+        <app.boxes.home>./boxes</app.boxes.home>
+        <app.logs>./logs</app.logs>
+        <app.properties.path>./src/main/resources/application.properties</app.properties.path>
     </properties>
 
     <dependencies>
@@ -172,7 +175,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>./src/main/resources/application.properties</file>
+                                <file>${app.properties.path}</file>
                             </files>
                         </configuration>
                     </execution>
@@ -195,7 +198,8 @@
 
                                 <!--copies artficact to docker build dir in target-->
                                 <assembly>
-                                    <descriptorRef>artifact</descriptorRef>
+                                    <mode>dir</mode>
+                                    <descriptor>${project.basedir}/src/main/resources/assembly/release.xml</descriptor>
                                 </assembly>
                                 <tags>
                                     <tag>latest</tag>
@@ -210,7 +214,12 @@
                                 </ports>
                                 <volumes>
                                     <bind>
-                                        <volume>${box.container.home}:${box.container.home}</volume>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <volume>${app.boxes.home}:${box.container.home}</volume>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <volume>${app.properties.path}:${box.container.home}/application.properties</volume>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <volume>${app.logs}:${box.container.home}/logs</volume>
                                     </bind>
                                 </volumes>
                             </run>

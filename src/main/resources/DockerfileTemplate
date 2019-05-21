@@ -4,5 +4,7 @@ ADD maven/${fileName}.jar ${fileName}.jar
 RUN touch /${fileName}
 
 WORKDIR ${workdir}
+ADD maven/application.properties ${workdir}
+ADD maven/logs/ ${workdir}
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/${fileName}.jar"]
