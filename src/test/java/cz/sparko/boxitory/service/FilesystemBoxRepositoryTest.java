@@ -233,7 +233,7 @@ public class FilesystemBoxRepositoryTest {
     public void givenRepositoryAndBoxitoryPathType_whenGetBox_thenGetWhenFound(String boxName,
                                                                                Optional<Box> expectedResult) {
         /*sftp://my_test_server:/download/f25/virtualbox/1*/
-        testAppProperties.setPathType(BOXITORY);
+        testAppProperties.setPath_type(BOXITORY);
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(), new NoopDescriptionProvider()
         );

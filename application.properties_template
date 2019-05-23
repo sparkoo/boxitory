@@ -1,5 +1,6 @@
 box.home=/custom/test/repository/path
-box.host_prefix=sftp://localhost:
+box.host_prefix=http://localhost:8083
+box.path_type=raw
 server.port=8083
 
 box.sort_desc=false
