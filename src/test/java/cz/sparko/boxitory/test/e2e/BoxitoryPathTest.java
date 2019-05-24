@@ -39,7 +39,7 @@ public class BoxitoryPathTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void givenMultiProviders_whenBox_thenReturnListOfVmVersions() throws Exception {
+    public void givenBoxitoryPathConfig_whenGetBox_thenReturnProperUrls() throws Exception {
         mockMvc.perform(get("/vm"))
                 .andDo(print())
                 .andExpect(status().isOk())
