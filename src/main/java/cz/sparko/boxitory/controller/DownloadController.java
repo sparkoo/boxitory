@@ -39,6 +39,7 @@ public class DownloadController {
 
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + boxFile.getFilename() + "\"");
+        response.setHeader(HttpHeaders.CONTENT_LENGTH, "" + boxFile.fileSize());
         FileCopyUtils.copy(boxFile.getStream(), response.getOutputStream());
     }
 
