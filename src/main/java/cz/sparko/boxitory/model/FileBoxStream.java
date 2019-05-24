@@ -22,4 +22,9 @@ public class FileBoxStream implements BoxStream {
     public InputStream getStream() throws IOException {
         return new BufferedInputStream(new FileInputStream(file));
     }
+
+    @Override
+    public long fileSize() {
+        return this.file.length();
+    }
 }

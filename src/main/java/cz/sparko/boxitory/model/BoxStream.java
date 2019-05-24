@@ -7,4 +7,6 @@ public interface BoxStream {
     String getFilename();
 
     InputStream getStream() throws IOException;
+
+    long fileSize();
 }
