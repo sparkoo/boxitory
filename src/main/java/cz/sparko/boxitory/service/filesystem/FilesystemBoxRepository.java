@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,6 +40,7 @@ public class FilesystemBoxRepository implements BoxRepository {
     private final boolean sortDesc;
     private final int ensuredChecksum;
     private final DescriptionProvider descriptionProvider;
+    private final BoxPathType pathType;
 
     public FilesystemBoxRepository(AppProperties appProperties,
                                    HashService hashService,
@@ -49,6 +51,7 @@ public class FilesystemBoxRepository implements BoxRepository {
         this.hashService = hashService;
         this.descriptionProvider = descriptionProvider;
         this.ensuredChecksum = appProperties.getChecksum_ensure();
+        this.pathType = appProperties.getPath_type();
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
@@ -201,12 +204,13 @@ public class FilesystemBoxRepository implements BoxRepository {
                 version,
                 descriptionProvider.getDescription(boxName, version).orElse(null),
                 fileList.stream()
-                        .map((file) -> createBoxProviderFromFile(file, checksumCounter))
+                        .map((file) -> createBoxProviderFromFile(file, boxName, version, checksumCounter))
                         .collect(Collectors.toList())
         );
     }
 
-    private BoxProvider createBoxProviderFromFile(File file, CalculatedChecksumCounter checksumCounter) {
+    private BoxProvider createBoxProviderFromFile(File file, String boxName, String version,
+                                                  CalculatedChecksumCounter checksumCounter) {
         String filename = file.getName();
         List<String> parsedFilename = Arrays.asList(filename.split("_"));
 
@@ -214,8 +218,9 @@ public class FilesystemBoxRepository implements BoxRepository {
         if (provider.endsWith(".box")) {
             provider = provider.substring(0, provider.length() - 4);
         }
+
         return new BoxProvider(
-                hostPrefix + file.getAbsolutePath(),
+                hostPrefix + createBoxUrl(file.getAbsolutePath(), boxName, version, provider),
                 file.getAbsolutePath(),
                 provider,
                 hashService.getHashType(),
@@ -224,6 +229,17 @@ public class FilesystemBoxRepository implements BoxRepository {
                         !checksumCounter.isLimitOfCalculatedChecksumExceeded()
                 )
         );
+    }
+
+    private String createBoxUrl(String boxAbsolutePath, String boxName, String version, String provider) {
+        switch (this.pathType) {
+            case RAW:
+                return boxAbsolutePath;
+            case BOXITORY:
+                return String.format("/download/%s/%s/%s", boxName, provider, version);
+            default:
+                throw new RuntimeException("Unknown pathType " + this.pathType.name());
+        }
     }
 
     private boolean containsValidBoxFile(File file) {

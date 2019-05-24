@@ -1,5 +1,6 @@
 package cz.sparko.boxitory.conf;
 
+import cz.sparko.boxitory.service.filesystem.BoxPathType;
 import cz.sparko.boxitory.service.HashService.HashAlgorithm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ public class AppProperties {
     private int checksum_buffer_size = 1024;
     private int checksum_ensure = 1;
     private boolean version_as_timestamp = false;
+    private BoxPathType path_type = BoxPathType.RAW;
 
     public String getHome() {
         return home;
@@ -43,6 +45,10 @@ public class AppProperties {
 
     public boolean getVersion_as_timestamp() { return version_as_timestamp; }
 
+    public BoxPathType getPath_type() {
+        return path_type;
+    }
+
     public void setSort_desc(boolean sort_desc) {
         this.sort_desc = sort_desc;
     }
@@ -66,6 +72,10 @@ public class AppProperties {
     }
 
     public void setChecksum_ensure(int checksum_ensure) { this.checksum_ensure = checksum_ensure; }
+
+    public void setPath_type(BoxPathType path_type) {
+        this.path_type = path_type;
+    }
 
     public void setVersion_as_timestamp(boolean version_as_timestamp) { this.version_as_timestamp = version_as_timestamp; }
 }

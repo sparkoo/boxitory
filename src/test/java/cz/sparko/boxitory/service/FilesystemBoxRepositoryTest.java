@@ -6,6 +6,7 @@ import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxVersion;
 import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.model.BoxStream;
+import cz.sparko.boxitory.service.filesystem.BoxPathType;
 import cz.sparko.boxitory.service.filesystem.FilesystemBoxRepository;
 import cz.sparko.boxitory.service.noop.NoopDescriptionProvider;
 import cz.sparko.boxitory.service.noop.NoopHashService;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static cz.sparko.boxitory.service.filesystem.BoxPathType.BOXITORY;
+import static cz.sparko.boxitory.service.filesystem.BoxPathType.RAW;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -42,6 +45,7 @@ public class FilesystemBoxRepositoryTest {
     private AppProperties testAppProperties;
 
     Map<String, Box> testBoxes;
+    Map<String, Box> testBoxesWithBoxitoryTypePath;
 
     @BeforeClass
     public void setUp() throws IOException {
@@ -100,46 +104,82 @@ public class FilesystemBoxRepositoryTest {
         testBoxes.put("f25", new Box("f25", "f25",
                                      Arrays.asList(
                                              new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f25", "1", "virtualbox")
+                                                     createProvider("f25", "1", "virtualbox", RAW)
                                              )),
                                              new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f25", "2", "virtualbox")
+                                                     createProvider("f25", "2", "virtualbox", RAW)
                                              ))
                                      )));
         testBoxes.put("f26", new Box("f26", "f26",
                                      Arrays.asList(
                                              new BoxVersion("1", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f26", "1", "virtualbox")
+                                                     createProvider("f26", "1", "virtualbox", RAW)
                                              )),
                                              new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f26", "2", "virtualbox")
+                                                     createProvider("f26", "2", "virtualbox", RAW)
                                              )),
                                              new BoxVersion("3", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f26", "3", "virtualbox")
+                                                     createProvider("f26", "3", "virtualbox", RAW)
                                              ))
                                      )));
         testBoxes.put("f28", new Box("f28", "f28",
                                      Arrays.asList(
                                              new BoxVersion("1", VERSION_DESCRIPTION, Arrays.asList(
-                                                     createProvider("f28", "1", "virtualbox"),
-                                                     createProvider("f28", "1", "vmware")
+                                                     createProvider("f28", "1", "virtualbox", RAW),
+                                                     createProvider("f28", "1", "vmware", RAW)
                                              )),
                                              new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f28", "2", "virtualbox")
+                                                     createProvider("f28", "2", "virtualbox", RAW)
                                              ))
                                      )));
         testBoxes.put("f29", new Box("f29", "f29",
                                      Arrays.asList(
                                              new BoxVersion("1", VERSION_DESCRIPTION, Arrays.asList(
-                                                     createProvider("f29", "1", "virtualbox")
+                                                     createProvider("f29", "1", "virtualbox", RAW)
                                              )),
                                              new BoxVersion("2", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f29", "2", "virtualbox")
+                                                     createProvider("f29", "2", "virtualbox", RAW)
                                              )),
                                              new BoxVersion("3", VERSION_DESCRIPTION, Collections.singletonList(
-                                                     createProvider("f29", "3", "virtualbox")
+                                                     createProvider("f29", "3", "virtualbox", RAW)
                                              ))
                                      )));
+
+        testBoxesWithBoxitoryTypePath = new HashMap<>();
+        testBoxesWithBoxitoryTypePath.put("f25", new Box("f25", "f25",
+                                                         Arrays.asList(
+                                                                 new BoxVersion("1", VERSION_DESCRIPTION,
+                                                                                Collections.singletonList(
+                                                                                        createProvider("f25", "1",
+                                                                                                       "virtualbox",
+                                                                                                       BOXITORY)
+                                                                                )),
+                                                                 new BoxVersion("2", VERSION_DESCRIPTION,
+                                                                                Collections.singletonList(
+                                                                                        createProvider("f25", "2",
+                                                                                                       "virtualbox",
+                                                                                                       BOXITORY)
+                                                                                ))
+                                                         )));
+        testBoxesWithBoxitoryTypePath.put("f29", new Box("f29", "f29",
+                                                         Arrays.asList(
+                                                                 new BoxVersion("1", VERSION_DESCRIPTION, Arrays.asList(
+                                                                         createProvider("f29", "1", "virtualbox",
+                                                                                        BOXITORY)
+                                                                 )),
+                                                                 new BoxVersion("2", VERSION_DESCRIPTION,
+                                                                                Collections.singletonList(
+                                                                                        createProvider("f29", "2",
+                                                                                                       "virtualbox",
+                                                                                                       BOXITORY)
+                                                                                )),
+                                                                 new BoxVersion("3", VERSION_DESCRIPTION,
+                                                                                Collections.singletonList(
+                                                                                        createProvider("f29", "3",
+                                                                                                       "virtualbox",
+                                                                                                       BOXITORY)
+                                                                                ))
+                                                         )));
     }
 
     private void createDummyBoxFile(File boxDir, String filename) throws IOException {
@@ -148,8 +188,8 @@ public class FilesystemBoxRepositoryTest {
         FileUtils.writeByteArrayToFile(boxFile, filename.getBytes());
     }
 
-    private BoxProvider createProvider(String boxName, String boxVersion, String boxProvider) {
-        return new BoxProvider(composePath(boxName, boxVersion, boxProvider),
+    private BoxProvider createProvider(String boxName, String boxVersion, String boxProvider, BoxPathType pathType) {
+        return new BoxProvider(composePath(boxName, boxVersion, boxProvider, pathType),
                                composeLocalPath(boxName, boxVersion, boxProvider),
                                boxProvider, null, null);
     }
@@ -172,6 +212,30 @@ public class FilesystemBoxRepositoryTest {
         BoxRepository boxRepository = new FilesystemBoxRepository(
                 testAppProperties, new NoopHashService(),
                 new NoopDescriptionProvider()
+        );
+
+        Optional<Box> providedBox = boxRepository.getBox(boxName);
+
+        assertEquals(providedBox.isPresent(), expectedResult.isPresent());
+        expectedResult.ifPresent(box -> assertEquals(providedBox.get(), box));
+    }
+
+    @DataProvider
+    public Object[][] boxesMapWithBoxitoryPath() {
+        return new Object[][]{
+                {"f25", Optional.of(testBoxesWithBoxitoryTypePath.get("f25"))},
+                {"f27", Optional.empty()},
+                {"f29", Optional.of(testBoxesWithBoxitoryTypePath.get("f29"))},
+        };
+    }
+
+    @Test(dataProvider = "boxesMapWithBoxitoryPath")
+    public void givenRepositoryAndBoxitoryPathType_whenGetBox_thenGetWhenFound(String boxName,
+                                                                               Optional<Box> expectedResult) {
+        /*sftp://my_test_server:/download/f25/virtualbox/1*/
+        testAppProperties.setPath_type(BOXITORY);
+        BoxRepository boxRepository = new FilesystemBoxRepository(
+                testAppProperties, new NoopHashService(), new NoopDescriptionProvider()
         );
 
         Optional<Box> providedBox = boxRepository.getBox(boxName);
@@ -347,11 +411,18 @@ public class FilesystemBoxRepositoryTest {
         boxRepository.latestVersionOfBox(boxName, boxProvider);
     }
 
-    private String composePath(String boxName, String version, String provider) {
-        return String.format("%s%s" + File.separator + "%s" + File.separator + "%s_%s_%s.box",
-                             TEST_BOX_PREFIX,
-                             testHomeDir.getAbsolutePath(),
-                             boxName, boxName, version, provider);
+    private String composePath(String boxName, String version, String provider, BoxPathType pathType) {
+        if (pathType == BoxPathType.RAW) {
+            return String.format("%s%s" + File.separator + "%s" + File.separator + "%s_%s_%s.box",
+                                 TEST_BOX_PREFIX,
+                                 testHomeDir.getAbsolutePath(),
+                                 boxName, boxName, version, provider);
+        }
+        if (pathType == BOXITORY) {
+            return String.format("%s/download/%s/%s/%s", TEST_BOX_PREFIX, boxName, provider, version);
+        }
+
+        throw new RuntimeException("bad path type: [" + pathType.name() + "]");
     }
 
     private String composeLocalPath(String boxName, String version, String provider) {
