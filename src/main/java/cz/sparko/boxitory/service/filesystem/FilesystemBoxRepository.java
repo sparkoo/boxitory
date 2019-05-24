@@ -51,7 +51,7 @@ public class FilesystemBoxRepository implements BoxRepository {
         this.hashService = hashService;
         this.descriptionProvider = descriptionProvider;
         this.ensuredChecksum = appProperties.getChecksum_ensure();
-        this.pathType = appProperties.getPathType();
+        this.pathType = appProperties.getPath_type();
         LOG.info("setting BOX_HOME as [{}] and HOST_PREFIX as [{}]", boxHome.getAbsolutePath(), hostPrefix);
     }
 
