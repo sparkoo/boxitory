@@ -22,9 +22,6 @@ public class BoxitoryPathTest extends AbstractIntegrationTest {
     private final String VM_1_VBOX = VM + "_1_virtualbox.box";
     private final String VM_1_VBOX_DLURL = "download/" + VM + "/virtualbox/1";
 
-    private final String VM_2_VBOX = VM + "_2_virtualbox.box";
-    private final String VM_2_VBOX_DLURL = "download/" + VM + "/virtualbox/2";
-
     private final String VM_2_LVIRT = VM + "_2_libvirt.box";
     private final String VM_2_LVIRT_DLURL = "download/" + VM + "/libvirt/2";
 
@@ -34,7 +31,6 @@ public class BoxitoryPathTest extends AbstractIntegrationTest {
         createRepositoryDir();
         File vmDir = createDirInRepository(VM);
         createFile(vmDir.getPath() + File.separator + VM_1_VBOX);
-        createFile(vmDir.getPath() + File.separator + VM_2_VBOX);
         createFile(vmDir.getPath() + File.separator + VM_2_LVIRT);
     }
 
@@ -48,7 +44,8 @@ public class BoxitoryPathTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.description", is(VM)))
                 .andExpect(jsonPath("$.versions", hasSize(2)))
                 .andExpect(jsonPath("$.versions[0].version", is("2")))
-                .andExpect(jsonPath("$.versions[0].providers", hasSize(2)))
+                .andExpect(jsonPath("$.versions[0].providers", hasSize(1)))
+                .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(appProperties.getHost_prefix())))
                 .andExpect(jsonPath("$.versions[0].providers[0].url", containsString(VM_2_LVIRT_DLURL)))
                 .andExpect(jsonPath("$.versions[1].version", is("1")))
                 .andExpect(jsonPath("$.versions[1].providers", hasSize(1)))
