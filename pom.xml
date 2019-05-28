@@ -64,6 +64,10 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <docker-maven-plugin.version>0.28.0</docker-maven-plugin.version>
+        <app.boxes.home>./boxes</app.boxes.home>
+        <app.logs>./logs</app.logs>
+        <app.properties.path>./src/main/resources/application.properties</app.properties.path>
     </properties>
 
     <dependencies>
@@ -158,6 +162,97 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${app.properties.path}</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker-maven-plugin.version}</version>
+
+                <configuration>
+                    <dockerHost>unix:///var/run/docker.sock</dockerHost>
+
+                    <verbose>true</verbose>
+                    <images>
+                        <image>
+                            <name>boxitory</name>
+                            <build>
+                                <dockerFileDir>${project.basedir}/target/dockerfile/</dockerFileDir>
+
+                                <!--copies artficact to docker build dir in target-->
+                                <assembly>
+                                    <mode>dir</mode>
+                                    <descriptor>${project.basedir}/src/main/resources/assembly/release.xml</descriptor>
+                                </assembly>
+                                <tags>
+                                    <tag>latest</tag>
+                                    <tag>${project.version}</tag>
+                                </tags>
+                            </build>
+                            <run>
+                                <ports>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <!--application.properties variable-->
+                                    <port>${server.port}:${server.port}</port>
+                                </ports>
+                                <volumes>
+                                    <bind>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <volume>${app.boxes.home}:${box.container.home}</volume>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <volume>${app.properties.path}:${box.container.home}/application.properties</volume>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <volume>${app.logs}:${box.container.home}/logs</volume>
+                                    </bind>
+                                </volumes>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <scripts>
+                        <script>file:///${project.basedir}/src/main/scripts/BuildDockerfile.groovy</script>
+                    </scripts>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <!-- any version of Groovy \>= 1.5.0 should work here -->
+                        <version>2.4.8</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

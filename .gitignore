@@ -28,3 +28,4 @@ test_repository/
 /pom.xml.releaseBackup
 /release.properties
 logs/
+boxes/
