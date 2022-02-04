@@ -1,20 +1,19 @@
 package cz.sparko.boxitory.test.e2e.ensurechecksum;
 
-import cz.sparko.boxitory.test.e2e.AbstractIntegrationTest;
-import org.springframework.test.context.TestPropertySource;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import cz.sparko.boxitory.test.e2e.AbstractIntegrationTest;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.springframework.test.context.TestPropertySource;
+import org.testng.annotations.Test;
 
 @TestPropertySource(properties = {"box.checksum=md5", "box.checksum_persist=false", "box.checksum_ensure=2"})
 public class ChecksumEnsureTest extends AbstractIntegrationTest {
@@ -50,7 +49,7 @@ public class ChecksumEnsureTest extends AbstractIntegrationTest {
         mockMvc.perform(get("/" + VM1))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.versions[0].providers[0].checksum", is(EXPECTED_BOX_CHECKSUM)))
                 .andExpect(jsonPath("$.versions[1].providers[0].checksum", is(EXPECTED_BOX_CHECKSUM)))
                 .andExpect(jsonPath("$.versions[2].providers[0].checksum").doesNotExist());

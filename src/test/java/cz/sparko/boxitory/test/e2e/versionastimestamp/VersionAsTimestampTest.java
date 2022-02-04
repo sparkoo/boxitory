@@ -1,22 +1,21 @@
 package cz.sparko.boxitory.test.e2e.versionastimestamp;
 
-import cz.sparko.boxitory.service.filesystem.FilesystemDescriptionProvider;
-import cz.sparko.boxitory.test.e2e.AbstractIntegrationTest;
-import org.springframework.test.context.TestPropertySource;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.Instant;
-
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import cz.sparko.boxitory.service.filesystem.FilesystemDescriptionProvider;
+import cz.sparko.boxitory.test.e2e.AbstractIntegrationTest;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Instant;
+import org.springframework.test.context.TestPropertySource;
+import org.testng.annotations.Test;
 
 @TestPropertySource(properties = {"box.version_as_timestamp=true"})
 public class VersionAsTimestampTest extends AbstractIntegrationTest {
@@ -56,7 +55,7 @@ public class VersionAsTimestampTest extends AbstractIntegrationTest {
         mockMvc.perform(get("/" + VM1))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.versions[0].description", is(EXPECTED_VM1BOX_DESCRIPTION)));
     }
 
@@ -65,7 +64,7 @@ public class VersionAsTimestampTest extends AbstractIntegrationTest {
         mockMvc.perform(get("/" + VM2))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.versions[0].description", is(EXPECTED_VM2BOX_DESCRIPTION)));
     }
 }

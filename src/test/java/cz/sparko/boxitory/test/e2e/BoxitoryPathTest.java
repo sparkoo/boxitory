@@ -1,20 +1,19 @@
 package cz.sparko.boxitory.test.e2e;
 
-import org.springframework.test.context.TestPropertySource;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.File;
+import java.io.IOException;
+import org.springframework.test.context.TestPropertySource;
+import org.testng.annotations.Test;
 
 @TestPropertySource(properties = {"box.path_type=BOXITORY"})
 public class BoxitoryPathTest extends AbstractIntegrationTest {
@@ -39,7 +38,7 @@ public class BoxitoryPathTest extends AbstractIntegrationTest {
         mockMvc.perform(get("/vm"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.name", is(VM)))
                 .andExpect(jsonPath("$.description", is(VM)))
                 .andExpect(jsonPath("$.versions", hasSize(2)))
