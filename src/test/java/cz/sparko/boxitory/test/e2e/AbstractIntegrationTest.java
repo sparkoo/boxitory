@@ -5,6 +5,7 @@ import cz.sparko.boxitory.conf.AppProperties;
 import cz.sparko.boxitory.controller.BoxController;
 import cz.sparko.boxitory.controller.BoxRestController;
 import cz.sparko.boxitory.controller.DownloadController;
+import cz.sparko.boxitory.test.e2e.AbstractIntegrationTest.TestConfig;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,9 +23,9 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
-@ContextConfiguration(classes = App.class)
+@ContextConfiguration(classes = {App.class, TestConfig.class})
 @WebMvcTest(controllers = {BoxRestController.class, DownloadController.class, BoxController.class})
-@AutoConfigureMockMvc(secure = false)
+@AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:test.properties")
 @Test(groups = "e2e")
 public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContextTests {

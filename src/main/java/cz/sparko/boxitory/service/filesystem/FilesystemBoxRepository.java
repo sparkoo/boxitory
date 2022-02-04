@@ -1,19 +1,18 @@
 package cz.sparko.boxitory.service.filesystem;
 
+import static cz.sparko.boxitory.domain.BoxVersion.VERSION_COMPARATOR;
+
 import cz.sparko.boxitory.conf.AppProperties;
-import cz.sparko.boxitory.exception.NotFoundException;
 import cz.sparko.boxitory.domain.Box;
 import cz.sparko.boxitory.domain.BoxProvider;
 import cz.sparko.boxitory.domain.BoxVersion;
+import cz.sparko.boxitory.exception.NotFoundException;
 import cz.sparko.boxitory.model.BoxStream;
 import cz.sparko.boxitory.model.CalculatedChecksumCounter;
 import cz.sparko.boxitory.model.FileBoxStream;
 import cz.sparko.boxitory.service.BoxRepository;
 import cz.sparko.boxitory.service.DescriptionProvider;
 import cz.sparko.boxitory.service.HashService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +22,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static cz.sparko.boxitory.domain.BoxVersion.VERSION_COMPARATOR;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FilesystemBoxRepository implements BoxRepository {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemBoxRepository.class);
