@@ -24,7 +24,6 @@ import java.io.IOException;
 
 @ContextConfiguration(classes = App.class)
 @WebMvcTest(controllers = {BoxRestController.class, DownloadController.class, BoxController.class})
-@AutoConfigureMockMvc(secure = false)
 @TestPropertySource(locations = "classpath:test.properties")
 @Test(groups = "e2e")
 public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContextTests {
